@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Tổng quan Kho & Danh mục";
+}
+
+<div class="container py-2">
+    <div class="mb-4">
+        <h3 class="fw-bold text-dark"><i class="fas fa-box-open text-primary me-2"></i>TRUNG TÂM QUẢN LÝ KHO HÀNG & DANH MỤC</h3>
+        <p class="text-muted">Chọn phân hệ bạn muốn thao tác và cấu hình dữ liệu hệ thống.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden text-center p-4">
+                <div class="my-3 text-primary">
+                    <i class="fas fa-table fa-3x"></i>
+                </div>
+                <h5 class="fw-bold card-title">Quản Lý Bàn Bida</h5>
+                <p class="card-text text-muted small">Thêm mới bàn chơi, thiết lập sơ đồ khu vực hiển thị ngoài màn hình bán hàng.</p>
+                <div class="mt-auto">
+                    <a asp-controller="Bans" asp-action="Index" class="btn btn-outline-primary w-100 fw-bold rounded-pill">Truy cập ngay</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden text-center p-4">
+                <div class="my-3 text-success">
+                    <i class="fas fa-utensils fa-3x"></i>
+                </div>
+                <h5 class="fw-bold card-title">Thực Đơn Món & Nước</h5>
+                <p class="card-text text-muted small">Cập nhật danh sách nước ngọt, mì gói, bia, thuốc lá... Thiết lập giá bán tại câu lạc bộ.</p>
+                <div class="mt-auto">
+                    <a asp-controller="DichVus" asp-action="Index" class="btn btn-outline-success w-100 fw-bold rounded-pill">Truy cập ngay</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden text-center p-4">
+                <div class="my-3 text-warning">
+                    <i class="fas fa-tools fa-3x"></i>
+                </div>
+                <h5 class="fw-bold card-title">Dịch Vụ Thuê Phụ Kiện</h5>
+                <p class="card-text text-muted small">Quản lý các danh mục tính phí riêng như thuê cơ riêng, cơ Libre, cơ 3C hoặc bao găng tay.</p>
+                <div class="mt-auto">
+                    <a asp-controller="DichVus" asp-action="Index" class="btn btn-outline-warning w-100 fw-bold rounded-pill">Truy cập ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

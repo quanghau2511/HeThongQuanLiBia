@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html><html lang="en"><head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Billiard POS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .navbar-custom { background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .nav-link { color: #444 !important; font-weight: 500; padding: 0.8rem 1.2rem !important; }
+        .nav-link:hover { color: #0d6efd !important; background: #f8f9fa; }
+        .btn-banhang { background-color: #ffb822; color: #000 !important; font-weight: bold; border-radius: 8px; }
+        .navbar-brand { font-weight: 800; color: #0d6efd !important; }
+        
+        /* Hiệu ứng Hover để tự động xổ Menu Kho Hàng & Danh Mục cực mượt */
+        .nav-item.dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+    </style></head><body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light navbar-custom border-bottom mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">H&L BILLIARDS</a>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link btn-banhang mx-2" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-shopping-cart me-1"></i> Mở Bàn 
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" asp-controller="KhoHang" asp-action="Index">
+                                <i class="fas fa-box-open me-1"></i> KHO HÀNG & DANH MỤC
+                            </a>
+                            <ul class="dropdown-menu shadow border-0">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Bans" asp-action="Index">
+                                        <i class="fas fa-table me-2"></i>Quản lý Bàn bida
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="DichVus" asp-action="Index" asp-route-loai="1">
+                                        <i class="fas fa-utensils me-2"></i>Thực đơn (Món & Nước)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="DichVus" asp-action="ThueDo">
+                                        <i class="fas fa-tools me-2"></i>Dịch vụ thuê (Cơ/Lơ/Găng)
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="DoanhThu">
+                                <i class="fas fa-chart-line me-1"></i> DOANH THU
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3 small text-muted"><i class="fas fa-map-marker-alt me-1"></i> Chi nhánh: Quận 7</span>
+                        <span class="fw-bold"><i class="fas fa-user-circle me-1"></i> Hậu Lê</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid px-4">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script></body></html>

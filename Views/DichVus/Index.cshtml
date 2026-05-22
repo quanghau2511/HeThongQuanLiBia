@@ -1,0 +1,81 @@
+﻿@model IEnumerable<HeThongQuanLiBia.Models.DichVu>
+@{
+    // Nếu ViewBag trống thì mặc định là loại 1 (Thực đơn)
+    int loai = ViewBag.LoaiHienTai ?? 1;
+    ViewData["Title"] = loai == 1 ? "Quản lý thực đơn" : "Quản lý dịch vụ thuê";
+}
+
+<div class="card shadow-sm border-0 rounded-3 p-4 bg-white">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1 text-dark">
+                @if (loai == 1)
+                {
+                    <i class="fas fa-utensils text-success me-2"></i><span>QUẢN LÝ THỰC ĐƠN MÓN & NƯỚC (LOẠI: 1)</span>
+                }
+                else
+                {
+                    <i class="fas fa-tools text-warning me-2"></i><span>QUẢN LÝ DỊCH VỤ THUÊ PHỤ KIỆN (LOẠI: 2)</span>
+                }
+            </h4>
+            <p class="text-muted small mb-0">Cấu hình giá bán và thêm bớt hàng hóa kinh doanh tại tiệm.</p>
+        </div>
+        <a asp-action="Create" asp-route-loai="@loai" class="btn btn-primary fw-bold rounded-3 px-4 shadow-sm">
+            <i class="fas fa-plus me-2"></i>Thêm sản phẩm mới
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle border">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-3" style="width: 10%">Mã Số</th>
+                    <th style="width: 35%">Tên Gọi Sản Phẩm/Dịch Vụ</th>
+                    <th style="width: 15%">Đơn Vị Tính</th>
+                    <th class="text-center" style="width: 15%">Số Lượng Tồn</th>
+                    <th class="text-end" style="width: 15%">Đơn Giá Bán</th>
+                    <th class="text-center" style="width: 10%">Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">Chưa có sản phẩm dữ liệu nào trong danh mục này.</td>
+                    </tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="ps-3 fw-bold text-secondary">#@item.DichVuId</td>
+                        <td><span class="fw-bold text-dark fs-6">@item.TenDichVu</span></td>
+                        <td><span class="badge bg-light text-dark border">@item.DonViTinh</span></td>
+                        <td class="text-center">@item.SoLuongTon</td>
+                        <td class="text-end text-primary fw-bold fs-6 pe-3">@($"{item.Gia:N0} VNĐ")</td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2">
+                                <a asp-action="Edit" asp-route-id="@item.DichVuId" asp-route-loai="@loai" class="btn btn-sm btn-outline-warning px-3 rounded-pill">
+                                    <i class="fas fa-edit me-1"></i> Sửa
+                                </a>
+
+                                <form asp-action="Delete" asp-route-id="@item.DichVuId" asp-route-loai="@loai" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa mặt hàng này không?');" class="m-0">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3 rounded-pill">
+                                        <i class="fas fa-trash-alt me-1"></i> Xóa
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

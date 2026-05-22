@@ -1,0 +1,223 @@
+﻿@model IEnumerable<HeThongQuanLiBia.Models.Bans>
+@{ ViewData["Title"] = "Mở bàn "; }
+
+<style>
+    .pos-wrapper { display: flex; height: calc(100vh - 100px); gap: 15px; }
+    .order-sidebar { width: 400px; background: #fff; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #eee; }
+    .main-content { flex: 1; background: #fff; border-radius: 12px; padding: 15px; border: 1px solid #eee; overflow-y: auto; }
+    .ban-card { border: none; border-radius: 15px; transition: 0.3s; position: relative; overflow: hidden; }
+    .ban-card.occupied { background: #fff1f2; border: 2px solid #ff4d4f; }
+    .ban-card.available { background: #f6ffed; border: 2px solid #52c41a; }
+    .item-card { border-radius: 10px; cursor: pointer; transition: 0.2s; border: 1px solid #f0f0f0; }
+    .item-card:hover { border-color: #0d6efd; transform: translateY(-2px); }
+    .filter-btn.active { background: #0d6efd !important; color: #fff !important; }
+    
+    .menu-item-img-container {
+        width: 100%;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+        overflow: hidden;
+        border-radius: 6px;
+        background-color: #f8f9fa;
+    }
+    .menu-item-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+</style>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="pos-wrapper">
+    <div class="order-sidebar">
+        <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center rounded-top">
+            <h6 class="mb-0 fw-bold">HÓA ĐƠN: @(ViewBag.BanDangChon?.TenBan ?? "...")</h6>
+            <span class="badge bg-primary">ID: @(ViewBag.HoaDonHienTai?.HoaDonId ?? 0)</span>
+        </div>
+        
+        <div class="flex-grow-1 overflow-auto">
+            <table class="table table-sm">
+                <thead>
+                    <tr class="small text-muted">
+                        <th class="ps-3">Tên món</th>
+                        <th class="text-center">SL</th>
+                        <th class="text-end pe-3">Tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.HoaDonHienTai?.ChiTietDichVus != null) {
+                        foreach (var ct in ViewBag.HoaDonHienTai.ChiTietDichVus) {
+                            <tr>
+                                <td class="ps-3">
+                                    <div class="fw-bold small">@ct.DichVu.TenDichVu</div>
+                                    <div class="text-muted" style="font-size: 10px;">@($"{ct.DonGiaTaiThoiDiemBan:N0}")</div>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <form asp-action="CapNhatMon" method="post">
+                                            <input type="hidden" name="banId" value="@ViewBag.BanDangChon.BanId" />
+                                            <input type="hidden" name="dichVuId" value="@ct.DichVuId" />
+                                            <input type="hidden" name="delta" value="-1" />
+                                            <button class="btn btn-outline-secondary btn-sm p-0" style="width:20px">-</button>
+                                        </form>
+                                        <span class="mx-2 fw-bold">@ct.SoLuong</span>
+                                        <form asp-action="CapNhatMon" method="post">
+                                            <input type="hidden" name="banId" value="@ViewBag.BanDangChon.BanId" />
+                                            <input type="hidden" name="dichVuId" value="@ct.DichVuId" />
+                                            <input type="hidden" name="delta" value="1" />
+                                            <button class="btn btn-outline-primary btn-sm p-0" style="width:20px">+</button>
+                                        </form>
+                                    </div>
+                                </td>
+                                <td class="text-end pe-3 align-middle">@($"{ct.SoLuong * ct.DonGiaTaiThoiDiemBan:N0}")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-3 border-top bg-light">
+            <div class="d-flex justify-content-between mb-1 small text-muted">
+                <span>Dịch vụ:</span> <span>@($"{(ViewBag.TienDichVu ?? 0):N0} VNĐ")</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2 small text-muted">
+                <span>Tiền giờ tạm tính:</span> <span>@($"{(ViewBag.TienGioTamTinh ?? 0):N0} VNĐ")</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="fw-bold text-danger">TỔNG CỘNG:</span>
+                <h4 class="fw-bold text-danger mb-0">@($"{(ViewBag.TongCong ?? 0):N0} VNĐ")</h4>
+            </div>
+            
+            @if (ViewBag.BanDangChon != null && ViewBag.BanDangChon.TrangThai == 0)
+            {
+                <form asp-action="MoBan" method="post">
+                    <input type="hidden" name="banId" value="@ViewBag.BanDangChon.BanId" />
+                    <button type="submit" class="btn btn-success w-100 py-2 fw-bold shadow">
+                        <i class="fas fa-play me-2"></i> BẮT ĐẦU MỞ BÀN
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form asp-action="ThanhToan" method="post">
+                    <input type="hidden" name="banId" value="@ViewBag.BanDangChon?.BanId" />
+                    <button type="submit" class="btn btn-danger w-100 py-2 fw-bold shadow" @(ViewBag.HoaDonHienTai == null ? "disabled" : "")>
+                        <i class="fas fa-money-bill-wave me-2"></i> THANH TOÁN
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="main-content">
+        <ul class="nav nav-pills mb-3 bg-light p-1 rounded" id="pills-tab">
+            <li class="nav-item" style="width: 50%;">
+                <button class="nav-link active w-100 fw-bold" data-bs-toggle="pill" data-bs-target="#tab-ban">SƠ ĐỒ BÀN</button>
+            </li>
+            <li class="nav-item" style="width: 50%;">
+                <button class="nav-link w-100 fw-bold" data-bs-toggle="pill" data-bs-target="#tab-menu">THỰC ĐƠN & DỊCH VỤ</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tab-ban">
+                <div class="row g-3">
+                    @foreach (var b in Model) {
+                        <div class="col-md-3">
+                            <a asp-action="Index" asp-route-id="@b.BanId" class="text-decoration-none">
+                                <div class="card ban-card @(b.TrangThai == 1 ? "occupied shadow-sm" : "available") p-3 text-center @(ViewBag.BanDangChon?.BanId == b.BanId ? "border-primary border-3" : "")">
+                                    <h5 class="fw-bold mb-1">@b.TenBan</h5>
+                                    @if(b.TrangThai == 1) {
+                                        <div class="text-danger fw-bold">@(ViewBag.ThoiGianChoi != null && ViewBag.ThoiGianChoi.ContainsKey(b.BanId) ? ViewBag.ThoiGianChoi[b.BanId] : "0h 0p")</div>
+                                        <i class="fas fa-clock text-danger my-2"></i>
+                                    } else {
+                                        <div class="text-success small">TRỐNG</div>
+                                        <i class="fas fa-check-circle text-success my-2"></i>
+                                    }
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-menu">
+                <div class="d-flex gap-2 mb-3">
+                    <button class="btn btn-sm btn-outline-secondary filter-btn active" onclick="filterMenu('all')">Tất cả</button>
+                    <button class="btn btn-sm btn-outline-secondary filter-btn" onclick="filterMenu('1')">Nước & Thuốc</button>
+                    <button class="btn btn-sm btn-outline-secondary filter-btn" onclick="filterMenu('2')">Thuê Cơ/Phụ kiện</button>
+                </div>
+                <div class="row g-2" id="menuList">
+                    @if (ViewBag.ListDichVu != null) {
+                        foreach (var dv in ViewBag.ListDichVu) {
+                            <div class="col-md-3 menu-item" data-loai="@dv.LoaiDichVu">
+                                <div class="card item-card p-2 text-center">
+                                    
+                                    <div class="menu-item-img-container">
+                                        @if (dv.TenDichVu != null)
+                                        {
+                                            string tenFileAnh = dv.TenDichVu.ToLower();
+                                            tenFileAnh = System.Text.RegularExpressions.Regex.Replace(tenFileAnh, "[áàảãạăắằẳẵặâấầẩẫậ]", "a");
+                                            tenFileAnh = System.Text.RegularExpressions.Regex.Replace(tenFileAnh, "[éèẻẽẹêếềểễệ]", "e");
+                                            tenFileAnh = System.Text.RegularExpressions.Regex.Replace(tenFileAnh, "[íìỉĩị]", "i");
+                                            tenFileAnh = System.Text.RegularExpressions.Regex.Replace(tenFileAnh, "[óòỏõọôốồổỗộơớờởỡợ]", "o");
+                                            tenFileAnh = System.Text.RegularExpressions.Regex.Replace(tenFileAnh, "[úùủũụưứừửữự]", "u");
+                                            tenFileAnh = System.Text.RegularExpressions.Regex.Replace(tenFileAnh, "[ýỳỷỹỵ]", "y");
+                                            tenFileAnh = System.Text.RegularExpressions.Regex.Replace(tenFileAnh, "đ", "d");
+                                            tenFileAnh = tenFileAnh.Replace(" ", "_");
+
+                                            <img src="~/img/products/@(tenFileAnh).jpg" 
+                                                 alt="@dv.TenDichVu" 
+                                                 class="menu-item-img" 
+                                                 onerror="this.onerror=null; this.src='/img/products/default.jpg';" />
+                                        }
+                                    </div>
+                                    <div class="small fw-bold text-truncate">@dv.TenDichVu</div>
+                                    <div class="text-primary small">@($"{dv.Gia:N0}đ")</div>
+                                    <form asp-action="ThemMon" method="post" class="mt-1">
+                                        <input type="hidden" name="banId" value="@ViewBag.BanDangChon?.BanId" />
+                                        <input type="hidden" name="dichVuId" value="@dv.DichVuId" />
+                                        <button class="btn btn-sm btn-primary w-100 rounded-pill" @(ViewBag.BanDangChon?.TrangThai != 1 ? "disabled" : "")>+</button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterMenu(loai) {
+        $('.menu-item').hide();
+        if (loai === 'all') {
+            $('.menu-item').show();
+        } else {
+            $('.menu-item[data-loai="' + loai + '"]').show();
+        }
+        
+        // Cập nhật logic đổi màu nút active đồng bộ với loại mới
+        $('.filter-btn').removeClass('active btn-primary').addClass('btn-outline-secondary');
+        $('.filter-btn[onclick="filterMenu(\'' + loai + '\')"]').addClass('active btn-primary').removeClass('btn-outline-secondary');
+    }
+</script>
