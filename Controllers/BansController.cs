@@ -20,14 +20,29 @@ namespace HeThongQuanLiBia.Controllers
             return View(danhSachBan);
         }
 
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var ban = await _context.Bans.FirstOrDefaultAsync(m => m.BanId == id);
+            if (ban == null) return NotFound();
+
+            return View(ban);
+        }
+
         public IActionResult Create()
         {
-            return View(new Bans());
+            return View(new Bans
+            {
+                TrangThai = 0,
+                TinhTrang = "Tốt",
+                GiaTheoGio = 0m
+            });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Bans ban)
+        public async Task<IActionResult> Create([Bind("TenBan,GiaTheoGio,TinhTrang,TrangThai")] Bans ban)
         {
             if (ModelState.IsValid)
             {
@@ -42,6 +57,7 @@ namespace HeThongQuanLiBia.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
+
             var ban = await _context.Bans.FindAsync(id);
             if (ban == null) return NotFound();
             return View(ban);
@@ -49,29 +65,41 @@ namespace HeThongQuanLiBia.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Bans ban)
+        public async Task<IActionResult> Edit(int id, [Bind("BanId,TenBan,GiaTheoGio,TinhTrang,TrangThai")] Bans ban)
         {
+            if (id != ban.BanId) return NotFound();
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Entry(ban).State = EntityState.Modified;
+                    _context.Update(ban);
                     await _context.SaveChangesAsync();
                     TempData["Success"] = "Cập nhật thông tin bàn thành công!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.Bans.Any(e => e.BanId == ban.BanId)) return NotFound();
-                    else throw;
+                    if (!BanExists(ban.BanId)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(ban);
         }
 
-        [HttpPost]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var ban = await _context.Bans.FirstOrDefaultAsync(m => m.BanId == id);
+            if (ban == null) return NotFound();
+
+            return View(ban);
+        }
+
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var ban = await _context.Bans.FindAsync(id);
             if (ban != null)
@@ -81,6 +109,11 @@ namespace HeThongQuanLiBia.Controllers
                 TempData["Success"] = "Đã xóa bàn bida thành công!";
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        private bool BanExists(int id)
+        {
+            return _context.Bans.Any(e => e.BanId == id);
         }
     }
 }

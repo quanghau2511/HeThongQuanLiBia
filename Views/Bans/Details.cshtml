@@ -1,0 +1,42 @@
+@model HeThongQuanLiBia.Models.Bans
+
+@{
+    ViewData["Title"] = "Thông tin bàn bida";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0 rounded-3 p-4 bg-white">
+            <h4 class="fw-bold mb-3 text-dark text-uppercase">
+                <i class="fas fa-info-circle text-info me-2"></i>Thông tin chi tiết bàn
+            </h4>
+            <hr />
+
+            <dl class="row mb-4">
+                <dt class="col-sm-4">Mã số</dt>
+                <dd class="col-sm-8">#@Model.BanId</dd>
+
+                <dt class="col-sm-4">Tên bàn</dt>
+                <dd class="col-sm-8">@Model.TenBan</dd>
+
+                <dt class="col-sm-4">Giá theo giờ</dt>
+                <dd class="col-sm-8">@Model.GiaTheoGio.ToString("N0") VNĐ</dd>
+
+                <dt class="col-sm-4">Tình trạng cơ sở vật chất</dt>
+                <dd class="col-sm-8">@Model.TinhTrang</dd>
+
+                <dt class="col-sm-4">Trạng thái chơi</dt>
+                <dd class="col-sm-8">@(Model.TrangThai == 1 ? "Đang có khách" : "Bàn trống")</dd>
+            </dl>
+
+            <div class="d-flex gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.BanId" class="btn btn-warning fw-bold px-4 py-2 rounded-3">
+                    <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                </a>
+                <a asp-action="Index" class="btn btn-light border fw-bold px-4 py-2 rounded-3 text-secondary">
+                    Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

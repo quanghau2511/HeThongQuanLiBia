@@ -18,8 +18,12 @@ namespace HeThongQuanLiBia.Models
         [Display(Name = "Tình Trạng Vật Chất")]
         public string TinhTrang { get; set; } = "Tốt";
 
+        [Display(Name = "Loại Bàn")]
+        public int LoaiBan { get; set; }
+
         [Display(Name = "Giá theo giờ")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal GiaTheoGio { get; set; }
+        // Xóa bỏ dòng 'public decimal GiaGio { get; set; }' đi nhé!
     }
 }
