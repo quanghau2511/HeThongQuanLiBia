@@ -1,66 +1,187 @@
 ﻿@model IEnumerable<HeThongQuanLiBia.Models.Bans>
-@{ ViewData["Title"] = "Quản lý Bida"; }
+@{ 
+    ViewData["Title"] = "Quản lý Bida - POS"; 
+
+    // Ép kiểu an toàn từ ViewBag ra biến cụ thể để xóa hoàn toàn lỗi "Nullability dynamic"
+    var banDangChon = ViewBag.BanDangChon as HeThongQuanLiBia.Models.Bans;
+    var hoaDonHienTai = ViewBag.HoaDonHienTai;
+    var chiTietDichVus = hoaDonHienTai?.ChiTietDichVus as IEnumerable<HeThongQuanLiBia.Models.ChiTietDichVu>;
+    decimal tongCong = ViewBag.TongCong ?? 0m;
+}
+
+@functions {
+    public string GenerateImageFileName(string tenDichVu)
+    {
+        if (string.IsNullOrEmpty(tenDichVu)) return "default";
+        string name = tenDichVu.ToLower();
+        string[] search = { "áàảãạăắằẳẵặâấầẩẫậ", "éèẻẽẹêếềểễệ", "íìỉĩị", "óòỏõọôốồổỗộơớờởỡợ", "úùủũụưứừửự", "ýỳỷỹỵ", "đ" };
+        string[] replace = { "a", "e", "i", "o", "u", "y", "d" };
+        
+        for (int i = 0; i < search.Length; i++) { 
+            foreach (char c in search[i]) {
+                name = name.Replace(c, replace[i][0]);
+            }
+        }
+        return name.Replace(" ", "_");
+    }
+
+    public string GetTableImage(string tenBan)
+    {
+        if (string.IsNullOrEmpty(tenBan)) return "default_table.png";
+        string name = tenBan.ToLower();
+        if (name.Contains("sung")) return "sung.png";
+        if (name.Contains("alex")) return "alex.png";
+        if (name.Contains("libre")) return "libre.png";
+        return "default_table.png";
+    }
+}
 
 <style>
-    .pos-wrapper { display: flex; height: calc(100vh - 100px); gap: 15px; padding: 10px; }
-    .order-sidebar { width: 400px; background: #fff; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #eee; }
-    .main-content { flex: 1; background: #fff; border-radius: 12px; padding: 15px; border: 1px solid #eee; overflow-y: auto; }
-    .ban-card { border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid #eee; transition: 0.3s; }
-    .ban-card.occupied { background: #fff1f2; border-color: #ff4d4f; }
-    .ban-card.available { background: #f6ffed; border-color: #52c41a; }
-    .item-card { border-radius: 10px; border: 1px solid #eee; height: 100%; padding: 10px; text-align: center; position: relative; }
-    .menu-item-img-container { height: 90px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px; }
-    .menu-item-img { max-width: 95%; max-height: 95%; object-fit: contain; }
-    .filter-btn { margin-right: 5px; margin-bottom: 5px; }
+    .pos-wrapper { display: flex; height: calc(100vh - 100px); gap: 15px; padding: 10px; background-color: #f8f9fa; }
+    .order-sidebar { width: 400px; background: #fff; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #eee; overflow: hidden; }
+    .main-content { flex: 1; background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #eee; overflow-y: auto; }
+    
+    .ban-card { border-radius: 12px; padding: 15px 10px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: all 0.2s ease-in-out; background: #fff; position: relative; }
+    .ban-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+    .ban-card.occupied { background: #fff1f2; border-color: #ff4d4f; color: #a8071a; }
+    .ban-card.available { background: #f6ffed; border-color: #52c41a; color: #135200; }
+    
+    .ban-img-container { height: 65px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 2.5rem; }
+    .ban-img { max-height: 100%; object-fit: contain; }
+
+    .item-card { border-radius: 10px; border: 1px solid #e2e8f0; height: 100%; padding: 12px; text-align: center; transition: all 0.2s ease-in-out; }
+    .item-card:hover { border-color: #0d6efd; box-shadow: 0 4px 8px rgba(13,110,253,0.15); }
+    .menu-item-img-container { height: 100px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px; }
+    .menu-item-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .filter-btn { margin-right: 8px; margin-bottom: 8px; border-radius: 20px; padding: 5px 15px; }
+    
+    .bill-table th { font-size: 0.9rem; color: #6c757d; }
+    .bill-table td { vertical-align: middle; }
+    
+    /* Hiệu ứng zoom nhẹ cho nút tăng giảm số lượng */
+    .btn-qty-adjust { transition: all 0.1s ease; }
+    .btn-qty-adjust:active { transform: scale(0.85); }
 </style>
 
 <div class="pos-wrapper">
     <div class="order-sidebar">
-        <div class="p-3 border-bottom bg-light fw-bold">HÓA ĐƠN: @(ViewBag.BanDangChon?.TenBan ?? "Chưa chọn bàn")</div>
-        <div class="flex-grow-1 overflow-auto p-2">
-            <table class="table table-sm">
-                @if (ViewBag.HoaDonHienTai?.ChiTietDichVus != null) {
-                    foreach (var ct in ViewBag.HoaDonHienTai.ChiTietDichVus) {
+        <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
+            <h5 class="m-0 fw-bold text-primary">
+                <i class="bi bi-receipt"></i> HÓA ĐƠN
+            </h5>
+            <span class="badge bg-secondary fs-6">@(banDangChon?.TenBan ?? "Chưa chọn bàn")</span>
+        </div>
+        
+        <div class="flex-grow-1 overflow-auto p-3">
+            <table class="table table-borderless table-sm bill-table">
+                @if (chiTietDichVus != null && chiTietDichVus.Any()) {
+                    <tbody>
+                        @foreach (var ct in chiTietDichVus) {
+                            <tr class="border-bottom align-middle">
+                                <td class="fw-semibold" style="width: 45%;">@(ct.DichVu?.TenDichVu ?? "Dịch vụ")</td>
+                                
+                                <td class="text-center" style="width: 35%;">
+                                    <div class="d-inline-flex align-items-center border rounded bg-white shadow-sm p-1">
+                                        <form asp-action="GiamMon" method="post" class="m-0">
+                                            <input type="hidden" name="banId" value="@banDangChon?.BanId" />
+                                            <input type="hidden" name="dichVuId" value="@ct.DichVuId" />
+                                            <button type="submit" class="btn btn-sm text-secondary px-2 py-0 fw-bold border-0 bg-transparent btn-qty-adjust">
+                                                <i class="bi bi-dash-lg"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <span class="px-2 fw-bold text-dark text-center" style="min-width: 25px;">@ct.SoLuong</span>
+                                        
+                                        <form asp-action="ThemMon" method="post" class="m-0">
+                                            <input type="hidden" name="banId" value="@banDangChon?.BanId" />
+                                            <input type="hidden" name="dichVuId" value="@ct.DichVuId" />
+                                            <button type="submit" class="btn btn-sm text-primary px-2 py-0 fw-bold border-0 bg-transparent btn-qty-adjust">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                                
+                                <td class="text-end fw-bold text-secondary" style="width: 20%;">@($"{ct.SoLuong * ct.DonGiaTaiThoiDiemBan:N0}")</td>
+                            </tr>
+                        }
+                    </tbody>
+                } else {
+                    <tbody>
                         <tr>
-                            <td>@ct.DichVu.TenDichVu</td>
-                            <td class="text-center">x@ct.SoLuong</td>
-                            <td class="text-end">@($"{ct.SoLuong * ct.DonGiaTaiThoiDiemBan:N0}")</td>
+                            <td colspan="3" class="text-center text-muted py-5">
+                                <i class="bi bi-cup-straw fs-2 d-block mb-2 text-black-50"></i>
+                                <i>Chưa có dịch vụ nào được gọi.</i>
+                            </td>
                         </tr>
-                    }
+                    </tbody>
                 }
             </table>
         </div>
-        <div class="p-3 border-top">
-            <h5 class="text-danger fw-bold mb-3">TỔNG: @($"{(ViewBag.TongCong ?? 0):N0} VNĐ")</h5>
-            @if (ViewBag.BanDangChon != null && ViewBag.BanDangChon.TrangThai == 0) {
-                <form asp-action="MoBan" method="post">
-                    <input type="hidden" name="banId" value="@ViewBag.BanDangChon.BanId" />
-                    <button class="btn btn-success w-100 fw-bold">BẮT ĐẦU MỞ BÀN</button>
-                </form>
+        
+        <div class="p-3 bg-light border-top">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="fw-bold fs-5">TỔNG CỘNG:</span>
+                <span class="text-danger fw-bold fs-4">@($"{tongCong:N0} đ")</span>
+            </div>
+            
+            @if (banDangChon != null) {
+                if (banDangChon.TrangThai == 0) {
+                    <form asp-action="MoBan" method="post">
+                        <input type="hidden" name="id" value="@banDangChon.BanId" />
+                        <button type="submit" class="btn btn-success w-100 fw-bold py-2 fs-5 shadow-sm">
+                            <i class="bi bi-play-circle-fill"></i> MỞ BÀN
+                        </button>
+                    </form>
+                } else {
+                    <form asp-action="ThanhToan" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn kết thúc và thanh toán cho bàn này không?')">
+                        <input type="hidden" name="banId" value="@banDangChon.BanId" />
+                        <button type="submit" class="btn btn-danger w-100 fw-bold py-2 fs-5 shadow-sm">
+                            <i class="bi bi-cash-coin"></i> 
+                            @(tongCong > 0 ? "THANH TOÁN" : "TRẢ BÀN TRỐNG")
+                        </button>
+                    </form>
+                }
             } else {
-                <form asp-action="ThanhToan" method="post">
-                    <input type="hidden" name="banId" value="@ViewBag.BanDangChon?.BanId" />
-                    <button class="btn btn-danger w-100 fw-bold">THANH TOÁN</button>
-                </form>
+                <button class="btn btn-secondary w-100 fw-bold py-2 fs-5" disabled>
+                    <i class="bi bi-exclamation-circle"></i> CHƯA CHỌN BÀN
+                </button>
             }
         </div>
     </div>
 
     <div class="main-content">
-        <ul class="nav nav-pills mb-3 border-bottom pb-2">
-            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-ban">SƠ ĐỒ BÀN</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-menu">THỰC ĐƠN & DỊCH VỤ</button></li>
+        <ul class="nav nav-pills mb-4 border-bottom pb-3" id="posTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold px-4" data-bs-toggle="pill" data-bs-target="#tab-ban" type="button" role="tab">
+                    <i class="bi bi-grid-3x3-gap"></i> SƠ ĐỒ BÀN
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold px-4" data-bs-toggle="pill" data-bs-target="#tab-menu" type="button" role="tab">
+                    <i class="bi bi-cup-straw"></i> THỰC ĐƠN & DỊCH VỤ
+                </button>
+            </li>
         </ul>
 
         <div class="tab-content">
-            <div class="tab-pane fade show active" id="tab-ban">
+            <div class="tab-pane fade show active" id="tab-ban" role="tabpanel">
                 <div class="row g-3">
                     @foreach (var b in Model) {
-                        <div class="col-md-3">
+                        string tableImg = GetTableImage(b.TenBan);
+                        <div class="col-md-3 col-sm-4 col-6">
                             <a asp-action="Index" asp-route-id="@b.BanId" class="text-decoration-none">
-                                <div class="card ban-card @(b.TrangThai == 1 ? "occupied" : "available")">
-                                    <h5 class="fw-bold">@b.TenBan</h5>
-                                    <small>@(b.TrangThai == 1 ? "Đang chơi" : "Trống")</small>
+                                <div class="card ban-card @(b.TrangThai == 1 ? "occupied" : "available") @(banDangChon?.BanId == b.BanId ? "border-primary border-2 shadow" : "")">
+                                    <div class="ban-img-container">
+                                        <img src="/img/tables/@tableImg" 
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" 
+                                             class="ban-img" alt="@b.TenBan" />
+                                        <i class="bi bi-table text-secondary" style="display:none;"></i>
+                                    </div>
+                                    <h5 class="fw-bold mb-1 text-dark">@b.TenBan</h5>
+                                    <span class="badge @(b.TrangThai == 1 ? "bg-danger" : "bg-success")">
+                                        @(b.TrangThai == 1 ? "Đang chơi" : "Trống")
+                                    </span>
                                 </div>
                             </a>
                         </div>
@@ -68,41 +189,40 @@
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="tab-menu">
-                <div class="d-flex flex-wrap mb-3">
-                    <button class="btn btn-primary btn-sm filter-btn" onclick="filterMenu('all', this)">Tất cả</button>
-                    <button class="btn btn-outline-primary btn-sm filter-btn" onclick="filterMenu('1', this)">Đồ uống</button>
-                    <button class="btn btn-outline-primary btn-sm filter-btn" onclick="filterMenu('2', this)">Món ăn</button>
-                    <button class="btn btn-outline-primary btn-sm filter-btn" onclick="filterMenu('3', this)">Thuê cơ & Thuê phụ kiện</button>
+            <div class="tab-pane fade" id="tab-menu" role="tabpanel">
+                <div class="d-flex flex-wrap mb-4 pb-2 border-bottom">
+                    <button class="btn btn-primary filter-btn fw-semibold" onclick="filterMenu('all', this)">Tất cả</button>
+                    <button class="btn btn-outline-primary filter-btn fw-semibold" onclick="filterMenu('1', this)">Đồ uống</button>
+                    <button class="btn btn-outline-primary filter-btn fw-semibold" onclick="filterMenu('2', this)">Món ăn</button>
+                    <button class="btn btn-outline-primary filter-btn fw-semibold" onclick="filterMenu('3', this)">Dịch vụ/Phụ kiện</button>
                 </div>
-                <div class="row g-2">
-                    @foreach (var dv in ViewBag.ListDichVu) {
-                        <div class="col-md-3 menu-item" data-loai="@dv.LoaiDichVu">
-                            <div class="item-card">
-                                <div class="menu-item-img-container">
-                                    @{
-                                        string name = dv.TenDichVu.ToLower();
-                                        // Xử lý tiếng Việt (tránh lỗi hiển thị ảnh)
-                                        string[] search = {"áàảãạăắằẳẵặâấầẩẫậ", "éèẻẽẹêếềểễệ", "íìỉĩị", "óòỏõọôốồổỗộơớờởỡợ", "úùủũụưứừửự", "ýỳỷỹỵ", "đ"};
-                                        string[] replace = {"a", "e", "i", "o", "u", "y", "d"};
-                                        for(int i=0; i<search.Length; i++) { foreach(char c in search[i]) name = name.Replace(c, replace[i][0]); }
-                                        name = name.Replace(" ", "_");
-                                    }
-                                    <img src="/img/products/@(name).png" onerror="this.onerror=null;this.src='/img/products/@(name).jpg';" class="menu-item-img" />
+                
+                <div class="row g-3">
+                    @if(ViewBag.ListDichVu != null)
+                    {
+                        foreach (var dv in ViewBag.ListDichVu) {
+                            string imgName = GenerateImageFileName(dv.TenDichVu);
+                            <div class="col-lg-3 col-md-4 col-sm-6 menu-item" data-loai="@dv.LoaiDichVu">
+                                <div class="item-card d-flex flex-column">
+                                    <div class="menu-item-img-container">
+                                        <img src="/img/products/@(imgName).png" 
+                                             onerror="this.onerror=null;this.src='/img/products/@(imgName).jpg';" 
+                                             class="menu-item-img" alt="@dv.TenDichVu" />
+                                    </div>
+                                    <div class="fw-bold text-truncate mb-1 text-dark" title="@dv.TenDichVu">@dv.TenDichVu</div>
+                                    <div class="text-primary fw-semibold mb-3">@($"{dv.Gia:N0} đ")</div>
+                                    
+                                    <form asp-action="ThemMon" method="post" class="mt-auto">
+                                        <input type="hidden" name="banId" value="@banDangChon?.BanId" />
+                                        <input type="hidden" name="dichVuId" value="@dv.DichVuId" />
+                                        <button type="submit" class="btn btn-outline-primary w-100 fw-bold" 
+                                                @(banDangChon?.TrangThai != 1 ? "disabled" : "")>
+                                            <i class="bi bi-plus-circle"></i> Thêm món
+                                        </button>
+                                    </form>
                                 </div>
-                                <div class="small fw-bold text-truncate">@dv.TenDichVu</div>
-                                <div class="text-primary small mb-2">@($"{dv.Gia:N0}đ")</div>
-                                
-                                <form asp-action="ThemMon" method="post">
-                                    <input type="hidden" name="banId" value="@ViewBag.BanDangChon?.BanId" />
-                                    <input type="hidden" name="dichVuId" value="@dv.DichVuId" />
-                                    <button class="btn btn-sm btn-primary w-100" 
-                                            @(ViewBag.BanDangChon?.TrangThai != 1 ? "disabled" : "")>
-                                        Thêm món
-                                    </button>
-                                </form>
                             </div>
-                        </div>
+                        }
                     }
                 </div>
             </div>
@@ -111,11 +231,48 @@
 </div>
 
 <script>
+    // 1. Hàm lọc món ăn theo danh mục
     function filterMenu(loai, btn) {
-        if (loai === 'all') $('.menu-item').show();
-        else { $('.menu-item').hide(); $('.menu-item[data-loai="' + loai + '"]').show(); }
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            if (loai === 'all' || item.getAttribute('data-loai') === loai) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(b => {
+            b.classList.remove('btn-primary');
+            b.classList.add('btn-outline-primary');
+        });
         
-        $('.filter-btn').removeClass('btn-primary').addClass('btn-outline-primary');
-        $(btn).removeClass('btn-outline-primary').addClass('btn-primary');
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-primary');
     }
+
+    // 2. GIẢI PHÁP GIỮ TAB KHI RELOAD: Tự động lưu trạng thái Tab vào bộ nhớ trình duyệt
+    document.addEventListener("DOMContentLoaded", function () {
+        // Kiểm tra xem trước khi reload bồ đang mở tab nào
+        var activeTabTarget = localStorage.getItem('activePosTab');
+        
+        if (activeTabTarget) {
+            // Tìm nút tab tương ứng và kích hoạt hiển thị
+            var tabTriggerButton = document.querySelector(`button[data-bs-target="${activeTabTarget}"]`);
+            if (tabTriggerButton) {
+                var tab = new bootstrap.Tab(tabTriggerButton);
+                tab.show();
+            }
+        }
+
+        // Lắng nghe sự kiện chuyển đổi tab của người dùng để lưu lại vị trí mới
+        var tabButtons = document.querySelectorAll('#posTabs button[data-bs-toggle="pill"]');
+        tabButtons.forEach(function (button) {
+            button.addEventListener('shown.bs.tab', function (event) {
+                var target = event.target.getAttribute('data-bs-target');
+                localStorage.setItem('activePosTab', target);
+            });
+        });
+    });
 </script>

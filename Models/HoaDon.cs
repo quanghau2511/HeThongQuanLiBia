@@ -26,4 +26,20 @@ public class HoaDon
 
     public virtual Bans? Ban { get; set; }
     public virtual ICollection<ChiTietDichVu> ChiTietDichVus { get; set; } = new List<ChiTietDichVu>();
+    // The database columns are GioVao / GioRa. Provide convenience (non-mapped)
+    // properties ThoiGianVao/ThoiGianRa used throughout the app so views/controllers
+    // can use those names without changing the database schema.
+    [NotMapped]
+    public DateTime ThoiGianVao
+    {
+        get => GioVao;
+        set => GioVao = value;
+    }
+
+    [NotMapped]
+    public DateTime? ThoiGianRa
+    {
+        get => GioRa;
+        set => GioRa = value;
+    }
 }

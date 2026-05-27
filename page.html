@@ -1,0 +1,829 @@
+﻿<!DOCTYPE html><html lang="en"><head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Qu&#x1EA3;n l&#xFD; Bida - Billiard POS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/site.css?v=j6fhJSuuyLpOSLuPJU0TsDV0iNjor5S3rDnvxJrt4bg" />
+    <style>
+        .navbar-custom { background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .nav-link { color: #444 !important; font-weight: 500; padding: 0.8rem 1.2rem !important; }
+        .nav-link:hover { color: #0d6efd !important; background: #f8f9fa; }
+        .btn-banhang { background-color: #ffb822; color: #000 !important; font-weight: bold; border-radius: 8px; }
+        .navbar-brand { font-weight: 800; color: #0d6efd !important; }
+        
+        /* Hiß╗çu ß╗⌐ng Hover ─æß╗â tß╗▒ ─æß╗Öng xß╗ò Menu Kho H├áng & Danh Mß╗Ñc cß╗▒c m╞░ß╗út */
+        .nav-item.dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+    </style></head><body>
+    <header b-19boqrlbuf>
+        <nav b-19boqrlbuf class="navbar navbar-expand-sm navbar-light navbar-custom border-bottom mb-3">
+            <div b-19boqrlbuf class="container-fluid">
+                <a class="navbar-brand" href="/">H&L BILLIARDS</a>
+                <div b-19boqrlbuf class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul b-19boqrlbuf class="navbar-nav flex-grow-1">
+                        <li b-19boqrlbuf class="nav-item">
+                            <a class="nav-link btn-banhang mx-2" href="/">
+                                <i b-19boqrlbuf class="fas fa-shopping-cart me-1"></i> Mß╗ƒ B├án 
+                            </a>
+                        </li>
+                        <li b-19boqrlbuf class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="/KhoHang">
+                                <i b-19boqrlbuf class="fas fa-box-open me-1"></i> KHO H├ÇNG & DANH Mß╗ñC
+                            </a>
+                            <ul b-19boqrlbuf class="dropdown-menu shadow border-0">
+                                <li b-19boqrlbuf>
+                                    <a class="dropdown-item" href="/Bans">
+                                        <i b-19boqrlbuf class="fas fa-table me-2"></i>Quß║ún l├╜ B├án bida
+                                    </a>
+                                </li>
+                                <li b-19boqrlbuf><hr b-19boqrlbuf class="dropdown-divider"></li>
+                                <li b-19boqrlbuf>
+                                    <a class="dropdown-item" href="/DichVus?loai=1">
+                                        <i b-19boqrlbuf class="fas fa-utensils me-2"></i>Thß╗▒c ─æ╞ín (M├│n & N╞░ß╗¢c)
+                                    </a>
+                                </li>
+                                <li b-19boqrlbuf>
+                                    <a class="dropdown-item" href="/DichVus/ThueDo">
+                                        <i b-19boqrlbuf class="fas fa-tools me-2"></i>Dß╗ïch vß╗Ñ thu├¬ (C╞í/L╞í/G─âng)
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li b-19boqrlbuf class="nav-item">
+                            <a class="nav-link" href="/Home/DoanhThu">
+                                <i b-19boqrlbuf class="fas fa-chart-line me-1"></i> DOANH THU
+                            </a>
+                        </li>
+                    </ul>
+                    <div b-19boqrlbuf class="d-flex align-items-center">
+                        <span b-19boqrlbuf class="me-3 small text-muted"><i b-19boqrlbuf class="fas fa-map-marker-alt me-1"></i> Chi nh├ính: Quß║¡n 7</span>
+                        <span b-19boqrlbuf class="fw-bold"><i b-19boqrlbuf class="fas fa-user-circle me-1"></i> Hß║¡u L├¬</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div b-19boqrlbuf class="container-fluid px-4">
+        <main b-19boqrlbuf role="main" class="pb-3">
+            
+<style>
+    .pos-wrapper { display: flex; height: calc(100vh - 100px); gap: 15px; padding: 10px; }
+    .order-sidebar { width: 400px; background: #fff; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #eee; }
+    .main-content { flex: 1; background: #fff; border-radius: 12px; padding: 15px; border: 1px solid #eee; overflow-y: auto; }
+    .ban-card { border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid #eee; transition: 0.3s; }
+    .ban-card.occupied { background: #fff1f2; border-color: #ff4d4f; }
+    .ban-card.available { background: #f6ffed; border-color: #52c41a; }
+    .item-card { border-radius: 10px; border: 1px solid #eee; height: 100%; padding: 10px; text-align: center; position: relative; }
+    .menu-item-img-container { height: 90px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px; }
+    .menu-item-img { max-width: 95%; max-height: 95%; object-fit: contain; }
+    .filter-btn { margin-right: 5px; margin-bottom: 5px; }
+</style>
+
+<div class="pos-wrapper">
+    <div class="order-sidebar">
+        <div class="p-3 border-bottom bg-light fw-bold">H├ôA ─É╞áN: Ch&#x1B0;a ch&#x1ECD;n b&#xE0;n</div>
+        <div class="flex-grow-1 overflow-auto p-2">
+            <table class="table table-sm">
+            </table>
+        </div>
+        <div class="p-3 border-top">
+            <h5 class="text-danger fw-bold mb-3">Tß╗öNG: 0 VN&#x110;</h5>
+                <form method="post" action="/Home/ThanhToan">
+                    <input type="hidden" name="banId" />
+                    <button class="btn btn-danger w-100 fw-bold">THANH TO├üN</button>
+                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <ul class="nav nav-pills mb-3 border-bottom pb-2">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-ban">S╞á ─Éß╗Æ B├ÇN</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-menu">THß╗░C ─É╞áN & Dß╗èCH Vß╗ñ</button></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tab-ban">
+                <div class="row g-3">
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/1">
+                                <div class="card ban-card occupied">
+                                    <h5 class="fw-bold">Sung 1</h5>
+                                    <small>&#x110;ang ch&#x1A1;i</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/2">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Sung 2</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/3">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Sung 3</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/4">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Sung 4</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/5">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Alex 1</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/6">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Alex 2</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/7">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Alex 3</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/8">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Alex 4</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/9">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Libre 1</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/10">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Libre 2</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/11">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Libre 3</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="text-decoration-none" href="/Home/Index/12">
+                                <div class="card ban-card available">
+                                    <h5 class="fw-bold">Libre 4</h5>
+                                    <small>Tr&#x1ED1;ng</small>
+                                </div>
+                            </a>
+                        </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-menu">
+                <div class="d-flex flex-wrap mb-3">
+                    <button class="btn btn-primary btn-sm filter-btn" onclick="filterMenu('all', this)">Tß║Ñt cß║ú</button>
+                    <button class="btn btn-outline-primary btn-sm filter-btn" onclick="filterMenu('1', this)">─Éß╗ô uß╗æng</button>
+                    <button class="btn btn-outline-primary btn-sm filter-btn" onclick="filterMenu('2', this)">M├│n ─ân</button>
+                    <button class="btn btn-outline-primary btn-sm filter-btn" onclick="filterMenu('3', this)">Thu├¬ c╞í & Thu├¬ phß╗Ñ kiß╗çn</button>
+                </div>
+                <div class="row g-2">
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/tra_da.png" onerror="this.onerror=null;this.src='/img/products/tra_da.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Tr&#xE0; &#x111;&#xE1;</div>
+                                <div class="text-primary small mb-2">3.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="52" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/tra_dao.png" onerror="this.onerror=null;this.src='/img/products/tra_dao.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Tr&#xE0; &#x111;&#xE0;o</div>
+                                <div class="text-primary small mb-2">25.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="53" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/tra_lipton.png" onerror="this.onerror=null;this.src='/img/products/tra_lipton.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Tr&#xE0; Lipton</div>
+                                <div class="text-primary small mb-2">20.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="54" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/tra_xanh_0_do.png" onerror="this.onerror=null;this.src='/img/products/tra_xanh_0_do.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Tr&#xE0; xanh 0 &#x111;&#x1ED9;</div>
+                                <div class="text-primary small mb-2">15.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="55" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/ca_phe_den.png" onerror="this.onerror=null;this.src='/img/products/ca_phe_den.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">C&#xE0; ph&#xEA; &#x111;en</div>
+                                <div class="text-primary small mb-2">15.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="56" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/ca_phe_s&#x1EEF;a_da.png" onerror="this.onerror=null;this.src='/img/products/ca_phe_s&#x1EEF;a_da.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">C&#xE0; ph&#xEA; s&#x1EEF;a &#x111;&#xE1;</div>
+                                <div class="text-primary small mb-2">18.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="57" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/cacao_s&#x1EEF;a.png" onerror="this.onerror=null;this.src='/img/products/cacao_s&#x1EEF;a.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Cacao s&#x1EEF;a</div>
+                                <div class="text-primary small mb-2">20.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="58" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/coca_cola.png" onerror="this.onerror=null;this.src='/img/products/coca_cola.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Coca cola</div>
+                                <div class="text-primary small mb-2">15.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="59" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/pepsi.png" onerror="this.onerror=null;this.src='/img/products/pepsi.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Pepsi</div>
+                                <div class="text-primary small mb-2">15.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="60" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/sting_dau.png" onerror="this.onerror=null;this.src='/img/products/sting_dau.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Sting d&#xE2;u</div>
+                                <div class="text-primary small mb-2">15.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="61" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/s&#x1EEF;a_tuoi.png" onerror="this.onerror=null;this.src='/img/products/s&#x1EEF;a_tuoi.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">S&#x1EEF;a t&#x1B0;&#x1A1;i</div>
+                                <div class="text-primary small mb-2">15.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="62" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/soda_chanh.png" onerror="this.onerror=null;this.src='/img/products/soda_chanh.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Soda chanh</div>
+                                <div class="text-primary small mb-2">20.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="63" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/nuoc_cam_ep.png" onerror="this.onerror=null;this.src='/img/products/nuoc_cam_ep.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">N&#x1B0;&#x1EDB;c cam &#xE9;p</div>
+                                <div class="text-primary small mb-2">25.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="64" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/nuoc_chanh_day.png" onerror="this.onerror=null;this.src='/img/products/nuoc_chanh_day.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">N&#x1B0;&#x1EDB;c chanh d&#xE2;y</div>
+                                <div class="text-primary small mb-2">25.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="65" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="1">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/nuoc_suoi.png" onerror="this.onerror=null;this.src='/img/products/nuoc_suoi.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">N&#x1B0;&#x1EDB;c su&#x1ED1;i</div>
+                                <div class="text-primary small mb-2">10.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="66" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/banh_mi_op_la.png" onerror="this.onerror=null;this.src='/img/products/banh_mi_op_la.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">B&#xE1;nh m&#xEC; &#x1ED1;p la</div>
+                                <div class="text-primary small mb-2">20.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="67" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/bun_bo.png" onerror="this.onerror=null;this.src='/img/products/bun_bo.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">B&#xFA;n b&#xF2;</div>
+                                <div class="text-primary small mb-2">40.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="68" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/com_bo_luc_lac.png" onerror="this.onerror=null;this.src='/img/products/com_bo_luc_lac.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">C&#x1A1;m b&#xF2; l&#xFA;c l&#x1EAF;c</div>
+                                <div class="text-primary small mb-2">55.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="69" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/com_chien_duong_chau.png" onerror="this.onerror=null;this.src='/img/products/com_chien_duong_chau.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">C&#x1A1;m chi&#xEA;n d&#x1B0;&#x1A1;ng ch&#xE2;u</div>
+                                <div class="text-primary small mb-2">45.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="70" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/com_suon.png" onerror="this.onerror=null;this.src='/img/products/com_suon.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">C&#x1A1;m s&#x1B0;&#x1EDD;n</div>
+                                <div class="text-primary small mb-2">35.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="71" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/hu_tieu.png" onerror="this.onerror=null;this.src='/img/products/hu_tieu.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">H&#x1EE7; ti&#x1EBF;u</div>
+                                <div class="text-primary small mb-2">35.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="72" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/mi_quang.png" onerror="this.onerror=null;this.src='/img/products/mi_quang.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">M&#xEC; qu&#x1EA3;ng</div>
+                                <div class="text-primary small mb-2">35.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="73" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/mi_tom_trung.png" onerror="this.onerror=null;this.src='/img/products/mi_tom_trung.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">M&#xEC; t&#xF4;m tr&#x1EE9;ng</div>
+                                <div class="text-primary small mb-2">25.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="74" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/mi_xao_bo.png" onerror="this.onerror=null;this.src='/img/products/mi_xao_bo.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">M&#xEC; x&#xE0;o b&#xF2;</div>
+                                <div class="text-primary small mb-2">40.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="75" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/pho_bo.png" onerror="this.onerror=null;this.src='/img/products/pho_bo.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Ph&#x1EDF; b&#xF2;</div>
+                                <div class="text-primary small mb-2">45.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="76" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="2">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/xoi_man.png" onerror="this.onerror=null;this.src='/img/products/xoi_man.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">X&#xF4;i m&#x1EB7;n</div>
+                                <div class="text-primary small mb-2">20.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="77" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="3">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/khan_lanh.png" onerror="this.onerror=null;this.src='/img/products/khan_lanh.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Kh&#x103;n l&#x1EA1;nh</div>
+                                <div class="text-primary small mb-2">2.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="78" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="3">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/thue_co.png" onerror="this.onerror=null;this.src='/img/products/thue_co.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Thu&#xEA; c&#x1A1;</div>
+                                <div class="text-primary small mb-2">20.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="79" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="3">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/bao_co.png" onerror="this.onerror=null;this.src='/img/products/bao_co.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Bao c&#x1A1;</div>
+                                <div class="text-primary small mb-2">5.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="80" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="3">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/gang_tay_bida.png" onerror="this.onerror=null;this.src='/img/products/gang_tay_bida.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">G&#x103;ng tay bida</div>
+                                <div class="text-primary small mb-2">15.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="81" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="3">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/dau_co_tip.png" onerror="this.onerror=null;this.src='/img/products/dau_co_tip.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">&#x110;&#x1EA7;u c&#x1A1; tip</div>
+                                <div class="text-primary small mb-2">10.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="82" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="3">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/lo_bida.png" onerror="this.onerror=null;this.src='/img/products/lo_bida.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">L&#x1A1; bida</div>
+                                <div class="text-primary small mb-2">5.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="83" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                        <div class="col-md-3 menu-item" data-loai="3">
+                            <div class="item-card">
+                                <div class="menu-item-img-container">
+                                    <img src="/img/products/thuoc_la.png" onerror="this.onerror=null;this.src='/img/products/thuoc_la.jpg';" class="menu-item-img" />
+                                </div>
+                                <div class="small fw-bold text-truncate">Thu&#x1ED1;c l&#xE1;</div>
+                                <div class="text-primary small mb-2">30.000&#x111;</div>
+                                
+                                <form method="post" action="/Home/ThemMon">
+                                    <input type="hidden" name="banId" />
+                                    <input type="hidden" name="dichVuId" value="84" />
+                                    <button class="btn btn-sm btn-primary w-100" 
+                                            disabled>
+                                        Th├¬m m├│n
+                                    </button>
+                                <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkzNFUlzP-ieDl3rrKkd9f3UilHfLdhyWLZFOH3_jgehiefXG-aH6H-1NdMEfS7XXCO7XAAW93iBXwVLvO3wZwJePFWcrjdMJ0ztTxP2mZbYNok5ehBySEZz7ToVBeArhSE" /></form>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterMenu(loai, btn) {
+        if (loai === 'all') $('.menu-item').show();
+        else { $('.menu-item').hide(); $('.menu-item[data-loai="' + loai + '"]').show(); }
+        
+        $('.filter-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+        $(btn).removeClass('btn-outline-primary').addClass('btn-primary');
+    }
+</script>
+        </main>
+    </div>
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script></body></html>

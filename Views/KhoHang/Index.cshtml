@@ -1,51 +1,88 @@
-﻿@{
-    ViewData["Title"] = "Tổng quan Kho & Danh mục";
+﻿@model IEnumerable<HeThongQuanLiBia.Models.DichVu>
+@{
+    ViewData["Title"] = "Kho Hàng & Danh Mục";
 }
 
-<div class="container py-2">
-    <div class="mb-4">
-        <h3 class="fw-bold text-dark"><i class="fas fa-box-open text-primary me-2"></i>TRUNG TÂM QUẢN LÝ KHO HÀNG & DANH MỤC</h3>
-        <p class="text-muted">Chọn phân hệ bạn muốn thao tác và cấu hình dữ liệu hệ thống.</p>
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary"><i class="bi bi-box-seam"></i> KHO HÀNG & DANH MỤC</h2>
+        <button type="button" class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#addModal">
+            <i class="bi bi-plus-lg"></i> THÊM MẶT HÀNG
+        </button>
     </div>
 
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden text-center p-4">
-                <div class="my-3 text-primary">
-                    <i class="fas fa-table fa-3x"></i>
-                </div>
-                <h5 class="fw-bold card-title">Quản Lý Bàn Bida</h5>
-                <p class="card-text text-muted small">Thêm mới bàn chơi, thiết lập sơ đồ khu vực hiển thị ngoài màn hình bán hàng.</p>
-                <div class="mt-auto">
-                    <a asp-controller="Bans" asp-action="Index" class="btn btn-outline-primary w-100 fw-bold rounded-pill">Truy cập ngay</a>
-                </div>
-            </div>
+    <div class="card shadow-sm">
+        <div class="card-header bg-white pt-3 pb-0">
+            <ul class="nav nav-tabs border-bottom-0" id="khoHangTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#tab-nuoc" type="button">
+                        <i class="bi bi-cup-straw"></i> ĐỒ UỐNG
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tab-monan" type="button">
+                        <i class="bi bi-egg-fried"></i> MÓN ĂN
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tab-phukien" type="button">
+                        <i class="bi bi-controller"></i> PHỤ KIỆN / THUÊ
+                    </button>
+                </li>
+            </ul>
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden text-center p-4">
-                <div class="my-3 text-success">
-                    <i class="fas fa-utensils fa-3x"></i>
+        <div class="card-body">
+            <div class="tab-content" id="khoHangTabContent">
+                
+                <div class="tab-pane fade show active" id="tab-nuoc">
+                    @await Html.PartialAsync("_BangHangHoa", Model.Where(m => m.LoaiDichVu == 1))
                 </div>
-                <h5 class="fw-bold card-title">Thực Đơn Món & Nước</h5>
-                <p class="card-text text-muted small">Cập nhật danh sách nước ngọt, mì gói, bia, thuốc lá... Thiết lập giá bán tại câu lạc bộ.</p>
-                <div class="mt-auto">
-                    <a asp-controller="DichVus" asp-action="Index" class="btn btn-outline-success w-100 fw-bold rounded-pill">Truy cập ngay</a>
+
+                <div class="tab-pane fade" id="tab-monan">
+                    @await Html.PartialAsync("_BangHangHoa", Model.Where(m => m.LoaiDichVu == 2))
                 </div>
+
+                <div class="tab-pane fade" id="tab-phukien">
+                    @await Html.PartialAsync("_BangHangHoa", Model.Where(m => m.LoaiDichVu == 3))
+                </div>
+
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden text-center p-4">
-                <div class="my-3 text-warning">
-                    <i class="fas fa-tools fa-3x"></i>
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="ThemMatHang" asp-controller="KhoHang" method="post">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold">THÊM MẶT HÀNG MỚI</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <h5 class="fw-bold card-title">Dịch Vụ Thuê Phụ Kiện</h5>
-                <p class="card-text text-muted small">Quản lý các danh mục tính phí riêng như thuê cơ riêng, cơ Libre, cơ 3C hoặc bao găng tay.</p>
-                <div class="mt-auto">
-                    <a asp-controller="DichVus" asp-action="Index" class="btn btn-outline-warning w-100 fw-bold rounded-pill">Truy cập ngay</a>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên mặt hàng</label>
+                        <input type="text" class="form-control" name="TenDichVu" required placeholder="VD: Mì xào bò, Trà đào..." />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Giá bán (VNĐ)</label>
+                        <input type="number" class="form-control" name="Gia" required min="0" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Danh mục</label>
+                        <select class="form-select" name="LoaiDichVu" required>
+                            <option value="1">Đồ uống</option>
+                            <option value="2">Món ăn</option>
+                            <option value="3">Phụ kiện / Thuê</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary fw-bold">Lưu lại</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -1,13 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using HeThongQuanLiBia.Data;
+using HeThongQuanLiBia.Models;
 
-namespace HeThongQuanLiBia.Controllers
+namespace HeThongQuanLiBia.Controllers;
+
+public class KhoHangController(ApplicationDbContext context) : Controller
 {
-    public class KhoHangController : Controller
+    public IActionResult Index()
     {
-        // Trang tổng quan chính của Kho Hàng & Danh Mục
-        public IActionResult Index()
+        // Lấy danh sách hàng hóa sản phẩm, nếu null gán mảng rỗng [] theo C# 12
+        var danhSachHang = context.DichVus?.ToList() ?? [];
+        return View(danhSachHang);
+    }
+
+    [HttpPost]
+    public IActionResult ThemMatHang(DichVu model)
+    {
+        if (ModelState.IsValid)
         {
-            return View();
+            context.DichVus?.Add(model);
+            context.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
+
+        var danhSachHang = context.DichVus?.ToList() ?? [];
+        return View(nameof(Index), danhSachHang);
     }
 }
