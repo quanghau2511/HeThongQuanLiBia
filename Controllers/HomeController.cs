@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HeThongQuanLiBia.Models;
 using HeThongQuanLiBia.Data;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HeThongQuanLiBia.Controllers;
 
+[Authorize]
 public class HomeController(ApplicationDbContext context) : Controller
 {
     // =========================
@@ -241,12 +244,92 @@ public class HomeController(ApplicationDbContext context) : Controller
     // =========================
     // 7. DOANH THU
     // =========================
+    // =========================
+    // 8. DASHBOARD
+    [Authorize(Roles = "Admin")]
+    public IActionResult Dashboard()
+    {
+        var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
+
+        var invoicesToday = context.HoaDons
+            .Include(h => h.Ban)
+            .Where(h => h.GioRa != null && h.GioRa >= today && h.GioRa < tomorrow)
+            .ToList();
+
+        var model = new DashboardViewModel
+        {
+            TotalRevenueToday = invoicesToday.Sum(h => h.TongTien),
+            TotalInvoicesToday = invoicesToday.Count,
+            TotalCustomersToday = invoicesToday.Select(h => h.BanId).Distinct().Count(),
+            ActiveTables = context.Bans.Count(b => b.TrangThai == 1),
+            RevenueChart = Enumerable.Range(0, 7)
+                .Select(offset =>
+                {
+                    var date = today.AddDays(-offset);
+                    var revenue = context.HoaDons
+                        .Where(h => h.GioRa != null && h.GioRa >= date && h.GioRa < date.AddDays(1))
+                        .Sum(h => h.TongTien);
+
+                    return new ChartPoint
+                    {
+                        Label = date.ToString("dd/MM"),
+                        Value = revenue
+                    };
+                })
+                .Reverse()
+                .ToList()
+        };
+
+        return View(model);
+    }
+
+    // =========================
+    // 9. LỊCH SỬ HÓA ĐƠN
+    [Authorize(Roles = "Admin")]
+    public IActionResult InvoiceHistory(DateTime? searchDate, string? tableName, int? invoiceId)
+    {
+        var query = context.HoaDons
+            .Include(h => h.Ban)
+            .Where(h => h.GioRa != null);
+
+        if (searchDate.HasValue)
+        {
+            query = query.Where(h => h.GioRa.HasValue && h.GioRa.Value.Date == searchDate.Value.Date);
+        }
+
+        if (!string.IsNullOrWhiteSpace(tableName))
+        {
+            query = query.Where(h => h.Ban != null && h.Ban.TenBan.Contains(tableName));
+        }
+
+        if (invoiceId.HasValue)
+        {
+            query = query.Where(h => h.HoaDonId == invoiceId.Value);
+        }
+
+        var model = new InvoiceHistoryViewModel
+        {
+            SearchDate = searchDate,
+            TableName = tableName,
+            InvoiceId = invoiceId,
+            Invoices = query
+                .OrderByDescending(h => h.GioRa)
+                .ToList()
+        };
+
+        return View(model);
+    }
+
+    // =========================
+    // 7. DOANH THU
     public IActionResult DoAccess(DateTime? fromDate, DateTime? toDate)
     {
         return RedirectToAction(nameof(DoanhThu),
             new { fromDate, toDate });
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult DoanhThu(DateTime? fromDate, DateTime? toDate)
     {
         var query = context.HoaDons

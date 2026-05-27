@@ -1,0 +1,59 @@
+@model HeThongQuanLiBia.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+    <div class="card shadow-sm rounded-4 border-0" style="max-width: 480px; width: 100%;">
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <h1 class="h3 fw-bold">Đăng nhập hệ thống</h1>
+                <p class="text-muted mb-0">Vui lòng nhập tài khoản để tiếp tục.</p>
+            </div>
+
+            <form asp-action="Login" method="post" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label"></label>
+                    <input asp-for="Username" class="form-control form-control-lg" placeholder="Tên đăng nhập" />
+                    <span asp-validation-for="Username" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control form-control-lg" placeholder="Mật khẩu" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập
+                </button>
+
+                <div class="mt-4 text-center text-muted small">
+                    Tài khoản mẫu: <strong>admin/admin123</strong> hoặc <strong>nhanvien/nv123</strong>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+}

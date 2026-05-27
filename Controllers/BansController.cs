@@ -1,10 +1,12 @@
 ﻿using HeThongQuanLiBia.Data;
 using HeThongQuanLiBia.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HeThongQuanLiBia.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BansController : Controller
     {
         private readonly ApplicationDbContext _context;

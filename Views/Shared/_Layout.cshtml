@@ -76,96 +76,140 @@
 
                     <ul class="navbar-nav flex-grow-1 align-items-center">
 
-                        <!-- MỞ BÀN -->
-                        <li class="nav-item me-2">
-                            <a class="nav-link btn-banhang"
-                                   asp-controller="Home"
-                                   asp-action="Index">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item me-2">
+                                <a class="nav-link btn-banhang"
+                                       asp-controller="Home"
+                                       asp-action="Index">
 
-                                <i class="fas fa-shopping-cart me-1"></i>
-                                MỞ BÀN
+                                    <i class="fas fa-shopping-cart me-1"></i>
+                                    MỞ BÀN
 
-                            </a>
-                        </li>
+                                </a>
+                            </li>
 
-                        <!-- BÀN BIDA -->
-                        <li class="nav-item">
-                            <a class="nav-link"
-                                   asp-controller="Bans"
-                                   asp-action="Index">
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <!-- BÀN BIDA -->
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                           asp-controller="Bans"
+                                           asp-action="Index">
 
-                                <i class="fas fa-table me-1"></i>
-                                BÀN BIDA
+                                        <i class="fas fa-table me-1"></i>
+                                        BÀN BIDA
 
-                            </a>
-                        </li>
+                                    </a>
+                                </li>
 
-                        <!-- NƯỚC UỐNG -->
-                        <li class="nav-item">
-                            <a class="nav-link"
-                                   asp-controller="DichVus"
-                                   asp-action="Index"
-                                   asp-route-loai="1">
+                                <!-- NƯỚC UỐNG -->
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                           asp-controller="DichVus"
+                                           asp-action="Index"
+                                           asp-route-loai="1">
 
-                                <i class="fas fa-glass-water me-1"></i>
-                                NƯỚC UỐNG
+                                        <i class="fas fa-glass-water me-1"></i>
+                                        NƯỚC UỐNG
 
-                            </a>
-                        </li>
+                                    </a>
+                                </li>
 
-                        <!-- MÓN ĂN -->
-                        <li class="nav-item">
-                            <a class="nav-link"
-                                   asp-controller="DichVus"
-                                   asp-action="Index"
-                                   asp-route-loai="2">
+                                <!-- MÓN ĂN -->
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                           asp-controller="DichVus"
+                                           asp-action="Index"
+                                           asp-route-loai="2">
 
-                                <i class="fas fa-burger me-1"></i>
-                                MÓN ĂN
+                                        <i class="fas fa-burger me-1"></i>
+                                        MÓN ĂN
 
-                            </a>
-                        </li>
+                                    </a>
+                                </li>
 
-                        <!-- DỊCH VỤ -->
-                        <li class="nav-item">
-                            <a class="nav-link"
-                                   asp-controller="DichVus"
-                                   asp-action="Index"
-                                   asp-route-loai="3">
+                                <!-- DỊCH VỤ -->
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                           asp-controller="DichVus"
+                                           asp-action="Index"
+                                           asp-route-loai="3">
 
-                                <i class="fas fa-screwdriver-wrench me-1"></i>
-                                DỊCH VỤ
+                                        <i class="fas fa-screwdriver-wrench me-1"></i>
+                                        DỊCH VỤ
 
-                            </a>
-                        </li>
+                                    </a>
+                                </li>
 
-                        <!-- DOANH THU -->
-                        <li class="nav-item">
-                            <a class="nav-link"
-                                   asp-controller="Home"
-                                   asp-action="DoanhThu">
+                                <!-- DASHBOARD -->
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                           asp-controller="Home"
+                                           asp-action="Dashboard">
 
-                                <i class="fas fa-chart-line me-1"></i>
-                                DOANH THU
+                                        <i class="fas fa-chart-pie me-1"></i>
+                                        DASHBOARD
 
-                            </a>
-                        </li>
+                                    </a>
+                                </li>
+
+                                <!-- LỊCH SỬ HÓA ĐƠN -->
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                           asp-controller="Home"
+                                           asp-action="InvoiceHistory">
+
+                                        <i class="fas fa-history me-1"></i>
+                                        LỊCH SỬ HÓA ĐƠN
+
+                                    </a>
+                                </li>
+
+                                <!-- DOANH THU -->
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                           asp-controller="Home"
+                                           asp-action="DoanhThu">
+
+                                        <i class="fas fa-chart-line me-1"></i>
+                                        DOANH THU
+
+                                    </a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-primary text-white px-4" asp-controller="Account" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt me-1"></i> Đăng nhập
+                                </a>
+                            </li>
+                        }
 
                     </ul>
 
                     <!-- USER INFO -->
                     <div class="d-flex align-items-center">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <span class="me-3 small branch-info d-none d-md-inline-flex align-items-center">
+                                <i class="fas fa-map-marker-alt me-1"></i>
+                                Chi nhánh: Quận 7
+                            </span>
 
-                        <span class="me-3 small branch-info">
-                            <i class="fas fa-map-marker-alt me-1"></i>
-                            Chi nhánh: Quận 7
-                        </span>
+                            <span class="user-info me-3">
+                                <i class="fas fa-user-circle me-1"></i>
+                                @User.Identity.Name
+                                <span class="badge bg-secondary text-uppercase ms-2">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                            </span>
 
-                        <span class="user-info">
-                            <i class="fas fa-user-circle me-1"></i>
-                            Hậu Lê
-                        </span>
-
+                            <a class="btn btn-outline-secondary btn-sm" asp-controller="Account" asp-action="Logout">
+                                <i class="fas fa-sign-out-alt me-1"></i>
+                                Đăng xuất
+                            </a>
+                        }
                     </div>
 
                 </div>

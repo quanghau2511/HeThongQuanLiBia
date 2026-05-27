@@ -19,5 +19,33 @@ namespace HeThongQuanLiBia.Data
         // Bảng quản lý dịch vụ (Thêm dòng này vào để hết lỗi)
         // Lưu ý: Nếu Model của bạn đặt tên là DichVu thì để là <DichVu>, nếu đặt là DichVus thì để là <DichVus> nhé
         public DbSet<DichVu> DichVus { get; set; }
+
+        // Bảng tài khoản đăng nhập
+        public DbSet<TaiKhoan> TaiKhoans { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<TaiKhoan>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<TaiKhoan>().HasData(
+                new TaiKhoan
+                {
+                    Id = 1,
+                    Username = "admin",
+                    Password = "admin123",
+                    Role = "Admin"
+                },
+                new TaiKhoan
+                {
+                    Id = 2,
+                    Username = "nhanvien",
+                    Password = "nv123",
+                    Role = "NhanVien"
+                });
+        }
     }
 }

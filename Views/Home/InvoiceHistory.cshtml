@@ -1,0 +1,87 @@
+@model HeThongQuanLiBia.Models.InvoiceHistoryViewModel
+
+@{
+    ViewData["Title"] = "Lịch sử hóa đơn";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex flex-column flex-md-row align-items-start justify-content-between gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold">Lịch sử hóa đơn</h2>
+            <p class="text-muted mb-0">Tìm kiếm và xem lại tất cả hóa đơn đã thanh toán.</p>
+        </div>
+        <a asp-action="Dashboard" class="btn btn-outline-secondary btn-lg align-self-center">
+            <i class="fas fa-chart-line me-2"></i> Quay về Dashboard
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Ngày</label>
+                    <input type="date" name="searchDate" value="@(Model.SearchDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tên bàn</label>
+                    <input type="text" name="tableName" value="@Model.TableName" class="form-control" placeholder="Nhập tên bàn" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Mã hóa đơn</label>
+                    <input type="number" name="invoiceId" value="@Model.InvoiceId" class="form-control" placeholder="Nhập mã hóa đơn" />
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Mã hóa đơn</th>
+                            <th>Bàn</th>
+                            <th>Ngày thanh toán</th>
+                            <th>Giờ vào</th>
+                            <th class="text-end">Tổng tiền</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Invoices.Any())
+                        {
+                            foreach (var invoice in Model.Invoices)
+                            {
+                                <tr>
+                                    <td class="fw-bold text-primary">#@invoice.HoaDonId</td>
+                                    <td>@invoice.Ban?.TenBan</td>
+                                    <td>@invoice.GioRa?.ToString("dd/MM/yyyy")</td>
+                                    <td>@invoice.GioVao.ToString("HH:mm")</td>
+                                    <td class="text-end fw-bold text-danger">@invoice.TongTien.ToString("N0") đ</td>
+                                    <td class="text-center">
+                                        <a asp-action="HoaDon" asp-route-id="@invoice.HoaDonId" class="btn btn-sm btn-outline-primary">
+                                            Xem
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="fas fa-folder-open fs-1 mb-2"></i>
+                                    <div>Không tìm thấy hóa đơn phù hợp.</div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
