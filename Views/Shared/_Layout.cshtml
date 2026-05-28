@@ -60,6 +60,10 @@
 </head>
 
 <body>
+    @{ 
+        var khachHangId = Context.Session.GetInt32("KhachHangId");
+        var khachHangTen = Context.Session.GetString("KhachHangTen");
+    }
 
     <header>
         <nav class="navbar navbar-expand-sm navbar-light navbar-custom border-bottom mb-3">
@@ -181,9 +185,21 @@
                         }
                         else
                         {
+                            <li class="nav-item me-2">
+                                <a class="nav-link btn btn-primary text-white px-4" asp-controller="KhachHang" asp-action="Dashboard">
+                                    <i class="fas fa-calendar-check me-1"></i> Đặt bàn online
+                                </a>
+                            </li>
+
+                            <li class="nav-item me-2">
+                                <a class="nav-link" asp-controller="KhachHang" asp-action="Login">
+                                    <i class="fas fa-user me-1"></i> Đăng nhập khách
+                                </a>
+                            </li>
+
                             <li class="nav-item">
-                                <a class="nav-link btn btn-primary text-white px-4" asp-controller="Account" asp-action="Login">
-                                    <i class="fas fa-sign-in-alt me-1"></i> Đăng nhập
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">
+                                    <i class="fas fa-sign-in-alt me-1"></i> Nhân viên
                                 </a>
                             </li>
                         }
@@ -192,7 +208,24 @@
 
                     <!-- USER INFO -->
                     <div class="d-flex align-items-center">
-                        @if (User.Identity?.IsAuthenticated == true)
+                        @if (khachHangId.HasValue)
+                        {
+                            <span class="me-3 small branch-info d-none d-md-inline-flex align-items-center">
+                                <i class="fas fa-user-circle me-1"></i>
+                                Khách hàng: @khachHangTen
+                            </span>
+
+                            <a class="btn btn-outline-secondary btn-sm me-2" asp-controller="KhachHang" asp-action="Dashboard">
+                                <i class="fas fa-calendar-check me-1"></i>
+                                Trang khách
+                            </a>
+
+                            <a class="btn btn-outline-secondary btn-sm" asp-controller="KhachHang" asp-action="Logout">
+                                <i class="fas fa-sign-out-alt me-1"></i>
+                                Đăng xuất
+                            </a>
+                        }
+                        else if (User.Identity?.IsAuthenticated == true)
                         {
                             <span class="me-3 small branch-info d-none d-md-inline-flex align-items-center">
                                 <i class="fas fa-map-marker-alt me-1"></i>

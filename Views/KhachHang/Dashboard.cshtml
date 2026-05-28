@@ -1,0 +1,471 @@
+@model HeThongQuanLiBia.Models.DatBanBookingViewModel
+@{
+    ViewData["Title"] = "Đặt bàn online";
+    var khachHang = ViewBag.KhachHang as HeThongQuanLiBia.Models.KhachHang;
+    var banList = ViewBag.BanList as IEnumerable<HeThongQuanLiBia.Models.Bans> ?? Enumerable.Empty<HeThongQuanLiBia.Models.Bans>();
+    var dichVuList = ViewBag.DichVuList as IEnumerable<HeThongQuanLiBia.Models.DichVu> ?? Enumerable.Empty<HeThongQuanLiBia.Models.DichVu>();
+    var lichSu = ViewBag.LichSuDatBan as IEnumerable<HeThongQuanLiBia.Models.DatBan> ?? Enumerable.Empty<HeThongQuanLiBia.Models.DatBan>();
+}
+
+<style>
+    body {
+        background:
+            radial-gradient(circle at top, rgba(14, 116, 144, 0.24), transparent 25%),
+            radial-gradient(circle at bottom, rgba(14, 165, 233, 0.16), transparent 30%),
+            linear-gradient(180deg, #020817 0%, #021126 28%, #f8fafc 28%, #f8fafc 100%);
+    }
+
+    .portal-hero {
+        border-radius: 30px;
+        border: 1px solid rgba(255,255,255,0.24);
+        background: linear-gradient(145deg, rgba(3,10,24,0.86), rgba(9,25,52,0.74));
+        box-shadow: 0 26px 60px rgba(7, 16, 35, 0.34);
+        color: #f8fafc;
+        backdrop-filter: blur(7px);
+    }
+
+    .portal-card {
+        border-radius: 26px;
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        background: rgba(255,255,255,0.78);
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+        backdrop-filter: blur(6px);
+    }
+
+    .glass-chip {
+        border-radius: 999px;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        background: rgba(14, 116, 144, 0.16);
+        color: #0f766e;
+    }
+
+    .menu-card {
+        border-radius: 20px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: #fff;
+        transition: all 0.22s ease;
+        overflow: hidden;
+    }
+
+    .menu-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 32px rgba(14, 116, 144, 0.16);
+        border-color: #0ea5e9;
+    }
+
+    .menu-thumb {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        background: linear-gradient(140deg,#e2e8f0,#f8fafc);
+    }
+
+    .btn-modern {
+        border-radius: 999px;
+        font-weight: 800;
+        transition: all 0.2s ease;
+    }
+
+    .table-card {
+        border-radius: 20px;
+        background: linear-gradient(180deg, #fff, #f8fafc);
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        padding: 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .table-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 30px rgba(14, 116, 144, 0.16);
+    }
+
+    .cart-item {
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: #fff;
+        padding: 0.9rem 1rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .invoice-box {
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(14, 116, 144, 0.12), rgba(14, 116, 144, 0.04));
+        border: 1px solid rgba(14, 116, 144, 0.18);
+        padding: 1rem 1.1rem;
+    }
+
+    .filter-chip {
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        color: #1e293b;
+        background: #fff;
+        font-weight: 700;
+        margin-right: 0.5rem;
+    }
+
+    .filter-chip.active {
+        background: linear-gradient(135deg, #0284c7, #06b6d4);
+        border-color: transparent;
+        color: #fff;
+    }
+
+    @@media (max-width: 991.98px) {
+        body { background: linear-gradient(180deg, #020817 0%, #021126 26%, #f8fafc 26%, #f8fafc 100%); }
+    }
+</style>
+
+<div class="container-fluid px-3 px-lg-4 py-3">
+    <div class="portal-hero p-4 p-lg-5 mb-4">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <div class="glass-chip mb-3">KHÁCH HÀNG</div>
+                <h1 class="display-5 fw-bold mb-3">Đặt bàn & chọn dịch vụ online</h1>
+                <p class="text-white-50 mb-0" style="max-width: 760px;">
+                    Đăng nhập tài khoản, chọn bàn bida, thời gian chơi, thêm đồ uống món ăn phụ kiện, và xem hóa đơn tạm tính ngay trên nền tảng hiện đại.
+                </p>
+            </div>
+            <div class="col-lg-5">
+                <div class="portal-card p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <div class="fw-bold text-dark mb-1">@khachHang?.HoTen</div>
+                            <div class="text-muted small">@khachHang?.Email</div>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary fw-bold">ONLINE</span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="p-3 rounded-3 bg-light">
+                                <div class="text-muted small">Tổng lượt đặt</div>
+                                <div class="fs-3 fw-bold text-dark">@lichSu.Count()</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3 bg-light">
+                                <div class="text-muted small">Trạng thái tài khoản</div>
+                                <div class="fs-6 fw-bold text-success">Hoạt động</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="alert alert-success rounded-4 border-0 shadow-sm mb-4">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @ViewBag.SuccessMessage
+        </div>
+    }
+
+    @if (ViewBag.InvoiceSummary != null)
+    {
+        <div class="alert alert-primary rounded-4 border-0 shadow-sm mb-4">
+            <div class="fw-bold mb-2"><i class="bi bi-receipt me-2"></i>Hóa đơn tạm tính</div>
+            <pre class="mb-0 text-dark" style="white-space: pre-wrap; font-family: inherit;">@ViewBag.InvoiceSummary</pre>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-xl-7">
+            <div class="portal-card p-4 mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h2 class="h4 fw-bold text-dark mb-1">Thông tin đặt bàn</h2>
+                        <p class="text-muted mb-0">Chọn bàn, ngày giờ chơi, và thêm dịch vụ kèm theo.</p>
+                    </div>
+                    <span class="glass-chip">Booking</span>
+                </div>
+
+                <form asp-action="DatBan" method="post" id="bookingForm">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="BanId" class="form-label text-dark fw-semibold">Bàn bida</label>
+                            <select asp-for="BanId" class="form-select">
+                                <option value="">-- Chọn bàn --</option>
+                                @foreach (var ban in banList)
+                                {
+                                    <option value="@ban.BanId" data-gia="@ban.GiaTheoGio">@ban.TenBan - @ban.GiaTheoGio.ToString("N0") đ/giờ</option>
+                                }
+                            </select>
+                            <span asp-validation-for="BanId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="NgayDat" class="form-label text-dark fw-semibold">Ngày chơi</label>
+                            <input asp-for="NgayDat" class="form-control" />
+                            <span asp-validation-for="NgayDat" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="GioBatDau" class="form-label text-dark fw-semibold">Giờ bắt đầu</label>
+                            <input asp-for="GioBatDau" type="time" class="form-control" />
+                            <span asp-validation-for="GioBatDau" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="GioKetThuc" class="form-label text-dark fw-semibold">Giờ kết thúc</label>
+                            <input asp-for="GioKetThuc" type="time" class="form-control" />
+                            <span asp-validation-for="GioKetThuc" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="GhiChu" class="form-label text-dark fw-semibold">Ghi chú</label>
+                            <textarea asp-for="GhiChu" class="form-control" rows="3" placeholder="Yêu cầu đặc biệt, thời gian ưu tiên, ..."></textarea>
+                            <span asp-validation-for="GhiChu" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <input type="hidden" asp-for="SelectedServicesJson" id="SelectedServicesJson" />
+
+                    <div class="mt-4 border-top pt-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h3 class="h5 fw-bold text-dark mb-0">Dịch vụ kèm theo</h3>
+                                <p class="text-muted small mb-0">Thêm đồ uống, món ăn và phụ kiện.</p>
+                            </div>
+                            <div class="d-flex flex-wrap">
+                                <button type="button" class="btn btn-sm filter-chip active" data-filter="all">Tất cả</button>
+                                <button type="button" class="btn btn-sm filter-chip" data-filter="1">Đồ uống</button>
+                                <button type="button" class="btn btn-sm filter-chip" data-filter="2">Món ăn</button>
+                                <button type="button" class="btn btn-sm filter-chip" data-filter="3">Phụ kiện</button>
+                            </div>
+                        </div>
+
+                        <div class="row g-3" id="menuGrid">
+                            @foreach (var dichVu in dichVuList)
+                            {
+                                <div class="col-md-6 col-lg-4 menu-item" data-loai="@dichVu.LoaiDichVu">
+                                    <div class="menu-card h-100">
+                                        <img src="/img/products/@(dichVu.TenDichVu.ToLower().Replace(" ", "_").Replace("á","a").Replace("à","a").Replace("ả","a").Replace("ã","a").Replace("ạ","a")) .png" onerror="this.onerror=null;this.src='/img/products/tra_da.jpg';" class="menu-thumb" alt="@dichVu.TenDichVu" />
+                                        <div class="p-3">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <div class="fw-bold text-dark">@dichVu.TenDichVu</div>
+                                                    <div class="text-muted small">@dichVu.DonViTinh</div>
+                                                </div>
+                                                <span class="badge bg-light text-dark fw-bold">@dichVu.Gia.ToString("N0") đ</span>
+                                            </div>
+                                            <button type="button" class="btn btn-primary btn-modern w-100 mt-3 add-service"
+                                                    data-id="@dichVu.DichVuId"
+                                                    data-name="@dichVu.TenDichVu"
+                                                    data-price="@dichVu.Gia">
+                                                <i class="bi bi-plus-circle me-1"></i>Thêm món
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-modern py-2 fs-5">
+                            <i class="bi bi-calendar-check me-2"></i>Xác nhận đặt bàn
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-xl-5">
+            <div class="portal-card p-4 mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <h2 class="h5 fw-bold text-dark mb-1">Giỏ dịch vụ & tạm tính</h2>
+                        <p class="text-muted small mb-0">Các món bạn thêm sẽ hiển thị tại đây.</p>
+                    </div>
+                    <span class="glass-chip">Preview</span>
+                </div>
+
+                <div id="cartList" class="mb-3">
+                    <div class="text-center text-muted py-4 border rounded-4">Chưa có dịch vụ nào được chọn.</div>
+                </div>
+
+                <div class="invoice-box">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Phí bàn/giờ</span>
+                        <span class="fw-bold text-dark" id="tablePriceDisplay">0 đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Dịch vụ</span>
+                        <span class="fw-bold text-dark" id="serviceTotalDisplay">0 đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between border-top pt-2 mt-2">
+                        <span class="fw-bold text-dark">Tổng tạm tính</span>
+                        <span class="fw-bold text-primary fs-5" id="grandTotalDisplay">0 đ</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portal-card p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <h2 class="h5 fw-bold text-dark mb-1">Lịch sử đặt bàn</h2>
+                        <p class="text-muted small mb-0">Theo dõi các lần đặt gần đây.</p>
+                    </div>
+                    <span class="glass-chip">History</span>
+                </div>
+
+                @if (!lichSu.Any())
+                {
+                    <div class="text-center text-muted py-4">Chưa có lịch sử đặt bàn.</div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-2">
+                        @foreach (var item in lichSu.Take(6))
+                        {
+                            <div class="border rounded-4 p-3 bg-white">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="fw-bold text-dark">@item.Ban?.TenBan</div>
+                                    <span class="badge bg-info-subtle text-info">@((item.TrangThai == 0 ? "Chờ xác nhận" : item.TrangThai == 1 ? "Đã xác nhận" : "Đã hủy"))</span>
+                                </div>
+                                <div class="small text-muted">@item.NgayDat.ToString("dd/MM/yyyy") • @item.GioBatDau.ToString(@"hh\:mm") - @item.GioKetThuc.ToString(@"hh\:mm")</div>
+                                <div class="small text-muted">@item.GhiChu</div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const menuItems = document.querySelectorAll('.menu-item');
+        const filterButtons = document.querySelectorAll('[data-filter]');
+        const serviceButtons = document.querySelectorAll('.add-service');
+        const cartList = document.getElementById('cartList');
+        const selectedServicesJson = document.getElementById('SelectedServicesJson');
+
+        let cart = new Map();
+
+        function syncCart() {
+            const items = Array.from(cart.values());
+            selectedServicesJson.value = JSON.stringify(items);
+
+            if (items.length === 0) {
+                cartList.innerHTML = '<div class="text-center text-muted py-4 border rounded-4">Chưa có dịch vụ nào được chọn.</div>';
+                document.getElementById('serviceTotalDisplay').textContent = '0 đ';
+            } else {
+                cartList.innerHTML = '';
+                let serviceTotal = 0;
+                items.forEach(item => {
+                    const total = item.price * item.quantity;
+                    serviceTotal += total;
+
+                    const node = document.createElement('div');
+                    node.className = 'cart-item';
+                    node.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold text-dark">${item.name}</div>
+                                <div class="small text-muted">${item.price.toLocaleString('vi-VN')} đ / món</div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle decrease-item" data-id="${item.id}">-</button>
+                                <span class="fw-bold text-dark">${item.quantity}</span>
+                                <button type="button" class="btn btn-sm btn-outline-primary rounded-circle increase-item" data-id="${item.id}">+</button>
+                            </div>
+                        </div>
+                    `;
+                    cartList.appendChild(node);
+                });
+
+                document.getElementById('serviceTotalDisplay').textContent = serviceTotal.toLocaleString('vi-VN') + ' đ';
+            }
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const selectedBan = document.querySelector('#BanId option:checked');
+            const tablePrice = Number(selectedBan?.dataset.gia || 0);
+            const serviceTotal = Array.from(cart.values()).reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const duration = (() => {
+                const start = document.querySelector('#GioBatDau').value;
+                const end = document.querySelector('#GioKetThuc').value;
+                if (!start || !end) return 0;
+                const [sh, sm] = start.split(':').map(Number);
+                const [eh, em] = end.split(':').map(Number);
+                const startMinutes = sh * 60 + sm;
+                const endMinutes = eh * 60 + em;
+                return Math.max((endMinutes - startMinutes) / 60, 0);
+            })();
+
+            document.getElementById('tablePriceDisplay').textContent = (tablePrice * duration).toLocaleString('vi-VN') + ' đ';
+            document.getElementById('grandTotalDisplay').textContent = ((tablePrice * duration) + serviceTotal).toLocaleString('vi-VN') + ' đ';
+        }
+
+        serviceButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const id = Number(button.dataset.id);
+                const name = button.dataset.name;
+                const price = Number(button.dataset.price);
+
+                if (cart.has(id)) {
+                    const item = cart.get(id);
+                    item.quantity += 1;
+                } else {
+                    cart.set(id, { id, name, price, quantity: 1 });
+                }
+
+                syncCart();
+            });
+        });
+
+        document.addEventListener('click', (event) => {
+            if (event.target.classList.contains('increase-item')) {
+                const id = Number(event.target.dataset.id);
+                const item = cart.get(id);
+                if (item) item.quantity += 1;
+                syncCart();
+            }
+
+            if (event.target.classList.contains('decrease-item')) {
+                const id = Number(event.target.dataset.id);
+                const item = cart.get(id);
+                if (item) {
+                    item.quantity -= 1;
+                    if (item.quantity <= 0) cart.delete(id);
+                }
+                syncCart();
+            }
+        });
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const type = button.dataset.filter;
+                menuItems.forEach(item => {
+                    if (type === 'all' || item.dataset.loai === type) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            });
+        });
+
+        document.getElementById('BanId').addEventListener('change', updateSummary);
+        document.getElementById('GioBatDau').addEventListener('change', updateSummary);
+        document.getElementById('GioKetThuc').addEventListener('change', updateSummary);
+
+        syncCart();
+        updateSummary();
+    </script>
+}

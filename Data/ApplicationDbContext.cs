@@ -23,6 +23,11 @@ namespace HeThongQuanLiBia.Data
         // Bảng tài khoản đăng nhập
         public DbSet<TaiKhoan> TaiKhoans { get; set; }
 
+        // Khách hàng đặt bàn online
+        public DbSet<KhachHang> KhachHangs { get; set; }
+        public DbSet<DatBan> DatBans { get; set; }
+        public DbSet<DatBanDichVu> DatBanDichVus { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -30,6 +35,38 @@ namespace HeThongQuanLiBia.Data
             modelBuilder.Entity<TaiKhoan>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
+
+            modelBuilder.Entity<KhachHang>()
+                .HasIndex(k => k.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<KhachHang>()
+                .HasIndex(k => k.SoDienThoai)
+                .IsUnique();
+
+            modelBuilder.Entity<KhachHang>()
+                .HasMany(k => k.DatBans)
+                .WithOne(d => d.KhachHang)
+                .HasForeignKey(d => d.KhachHangId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DatBan>()
+                .HasOne(d => d.Ban)
+                .WithMany()
+                .HasForeignKey(d => d.BanId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DatBan>()
+                .HasMany(d => d.DatBanDichVus)
+                .WithOne(dd => dd.DatBan)
+                .HasForeignKey(dd => dd.DatBanId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DatBanDichVu>()
+                .HasOne(dd => dd.DichVu)
+                .WithMany()
+                .HasForeignKey(dd => dd.DichVuId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<TaiKhoan>().HasData(
                 new TaiKhoan

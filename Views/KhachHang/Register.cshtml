@@ -1,0 +1,145 @@
+@model HeThongQuanLiBia.Models.KhachHangRegisterViewModel
+@{
+    ViewData["Title"] = "Đăng ký khách hàng";
+}
+
+<style>
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at top, rgba(10, 132, 255, 0.25), transparent 24%),
+            linear-gradient(160deg, #020817 0%, #041226 35%, #071b3a 100%);
+        color: #f8fafc;
+    }
+
+    .auth-shell {
+        min-height: calc(100vh - 72px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+    }
+
+    .glass-card {
+        background: rgba(7, 16, 35, 0.7);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.32);
+        backdrop-filter: blur(8px);
+        border-radius: 28px;
+    }
+
+    .brand-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(14, 116, 144, 0.28);
+        color: #67e8f9;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .form-control, .form-select {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        color: #fff;
+        border-radius: 14px;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255,255,255,0.55);
+    }
+
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.28);
+        border-color: #22c55e;
+        background: rgba(255,255,255,0.12);
+        color: #fff;
+    }
+
+    .btn-primary-soft {
+        border-radius: 999px;
+        background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+        border: none;
+        color: #fff;
+        font-weight: 800;
+    }
+
+    .btn-outline-soft {
+        border-radius: 999px;
+        color: #e2e8f0;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        background: rgba(255,255,255,0.04);
+        font-weight: 700;
+    }
+</style>
+
+<div class="auth-shell">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-6 col-md-8">
+                <div class="glass-card p-4 p-md-5">
+                    <div class="brand-badge mb-4">
+                        <i class="bi bi-person-add"></i>
+                        Khách hàng mới
+                    </div>
+
+                    <div class="mb-4">
+                        <h1 class="h2 fw-bold mb-2">Tạo tài khoản đặt bàn</h1>
+                        <p class="text-white-50 mb-0">Đăng ký nhanh để đặt bàn online, chọn dịch vụ và xem hóa đơn tạm tính.</p>
+                    </div>
+
+                    <form asp-action="Register" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="HoTen" class="form-label">Họ tên</label>
+                            <input asp-for="HoTen" class="form-control" placeholder="Nguyễn Văn A" />
+                            <span asp-validation-for="HoTen" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="SoDienThoai" class="form-label">Số điện thoại</label>
+                            <input asp-for="SoDienThoai" class="form-control" placeholder="0901234567" />
+                            <span asp-validation-for="SoDienThoai" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" class="form-control" placeholder="khach@demo.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="MatKhau" class="form-label">Mật khẩu</label>
+                            <input asp-for="MatKhau" class="form-control" placeholder="Tối thiểu 6 ký tự" />
+                            <span asp-validation-for="MatKhau" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="XacNhanMatKhau" class="form-label">Xác nhận mật khẩu</label>
+                            <input asp-for="XacNhanMatKhau" class="form-control" placeholder="Nhập lại mật khẩu" />
+                            <span asp-validation-for="XacNhanMatKhau" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary-soft py-2 fw-bold">
+                                <i class="bi bi-check-circle me-2"></i>Đăng ký tài khoản
+                            </button>
+                            <a asp-action="Login" class="btn btn-outline-soft py-2">Đã có tài khoản? Đăng nhập</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
