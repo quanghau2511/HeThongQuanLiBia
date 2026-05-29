@@ -12,9 +12,10 @@ namespace HeThongQuanLiBia.Controllers;
 [Authorize]
 public class HomeController(ApplicationDbContext context) : Controller
 {
-    // =========================
+  
     // 1. TRANG CHỦ POS
-    // =========================
+    //Kiemtra lại
+
     public IActionResult Index(int? id)
     {
         var danhSachBan = context.Bans.ToList();
@@ -54,9 +55,9 @@ public class HomeController(ApplicationDbContext context) : Controller
         return View(danhSachBan);
     }
 
-    // =========================
+
     // 2. MỞ BÀN
-    // =========================
+
     [HttpPost]
     public IActionResult MoBan(int id)
     {
@@ -83,9 +84,9 @@ public class HomeController(ApplicationDbContext context) : Controller
         return RedirectToAction(nameof(Index), new { id });
     }
 
-    // =========================
+
     // 3. THÊM MÓN
-    // =========================
+
     [HttpPost]
     public IActionResult ThemMon(int banId, int dichVuId)
     {
@@ -128,9 +129,9 @@ public class HomeController(ApplicationDbContext context) : Controller
         return RedirectToAction(nameof(Index), new { id = banId });
     }
 
-    // =========================
+
     // 4. GIẢM MÓN
-    // =========================
+
     [HttpPost]
     public IActionResult GiamMon(int banId, int dichVuId)
     {
@@ -165,9 +166,9 @@ public class HomeController(ApplicationDbContext context) : Controller
         return RedirectToAction(nameof(Index), new { id = banId });
     }
 
-    // =========================
+
     // 5. THANH TOÁN
-    // =========================
+
     [HttpPost]
     public IActionResult ThanhToan(int banId)
     {
@@ -220,9 +221,9 @@ public class HomeController(ApplicationDbContext context) : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    // =========================
+
     // 6. TRANG HÓA ĐƠN
-    // =========================
+
     public IActionResult HoaDon(int id)
     {
         var hoaDon = context.HoaDons
@@ -241,10 +242,10 @@ public class HomeController(ApplicationDbContext context) : Controller
         return View(hoaDon);
     }
 
-    // =========================
+
     // 7. DOANH THU
-    // =========================
-    // =========================
+
+
     // 8. DASHBOARD
     [Authorize(Roles = "Admin")]
     public IActionResult Dashboard()
@@ -284,7 +285,7 @@ public class HomeController(ApplicationDbContext context) : Controller
         return View(model);
     }
 
-    // =========================
+
     // 9. LỊCH SỬ HÓA ĐƠN
     [Authorize(Roles = "Admin")]
     public IActionResult InvoiceHistory(DateTime? searchDate, string? tableName, int? invoiceId)
@@ -321,7 +322,6 @@ public class HomeController(ApplicationDbContext context) : Controller
         return View(model);
     }
 
-    // =========================
     // 7. DOANH THU
     public IActionResult DoAccess(DateTime? fromDate, DateTime? toDate)
     {

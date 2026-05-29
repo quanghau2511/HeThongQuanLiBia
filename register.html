@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>&#x110;&#x103;ng k&#xFD; kh&#xE1;ch h&#xE0;ng - Billiard POS</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/site.css?v=GjYrI0wTw8ryv2etbd60qFmko8pPfkB7jNIPwFiMjvU" />
+
+    <style>
+            .navbar-custom {
+                background-color: #fff;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+
+            .nav-link {
+                color: #444 !important;
+                font-weight: 600;
+                padding: 0.8rem 1.2rem !important;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+            }
+
+                .nav-link:hover {
+                    color: #0d6efd !important;
+                    background: #f1f5ff;
+                }
+
+            .btn-banhang {
+                background-color: #ffb822;
+                color: #000 !important;
+                font-weight: bold;
+                border-radius: 10px;
+                padding: 10px 18px !important;
+            }
+
+                .btn-banhang:hover {
+                    background-color: #ffaa00;
+                }
+
+            .navbar-brand {
+                font-weight: 800;
+                color: #0d6efd !important;
+                font-size: 1.8rem;
+            }
+
+            .user-info {
+                font-weight: 600;
+            }
+
+            .branch-info {
+                color: #777;
+            }
+    </style>
+</head>
+
+<body>
+
+    <header b-19boqrlbuf>
+        <nav b-19boqrlbuf class="navbar navbar-expand-sm navbar-light navbar-custom border-bottom mb-3">
+
+            <div b-19boqrlbuf class="container-fluid">
+
+                <a class="navbar-brand" href="/">
+                    H&L BILLIARDS
+                </a>
+
+                <div b-19boqrlbuf class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                    <ul b-19boqrlbuf class="navbar-nav flex-grow-1 align-items-center">
+
+                            <li b-19boqrlbuf class="nav-item me-2">
+                                <a class="nav-link btn btn-primary text-white px-4" href="/KhachHang/Dashboard">
+                                    <i b-19boqrlbuf class="fas fa-calendar-check me-1"></i> Đặt bàn online
+                                </a>
+                            </li>
+                            <li b-19boqrlbuf class="nav-item me-2">
+                                <a class="nav-link" href="/KhachHang/Login">
+                                    <i b-19boqrlbuf class="fas fa-user me-1"></i> Đăng nhập khách
+                                </a>
+                            </li>
+                            <li b-19boqrlbuf class="nav-item">
+                                <a class="nav-link" href="/Account/Login">
+                                    <i b-19boqrlbuf class="fas fa-sign-in-alt me-1"></i> Nhân viên
+                                </a>
+                            </li>
+
+                    </ul>
+
+                    <!-- USER INFO -->
+                    <div b-19boqrlbuf class="d-flex align-items-center">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </nav>
+    </header>
+
+    <div b-19boqrlbuf class="container-fluid px-4">
+
+        <main b-19boqrlbuf role="main" class="pb-3">
+            
+<style>
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at top, rgba(10, 132, 255, 0.25), transparent 24%),
+            linear-gradient(160deg, #020817 0%, #041226 35%, #071b3a 100%);
+        color: #f8fafc;
+    }
+
+    .auth-shell {
+        min-height: calc(100vh - 72px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+    }
+
+    .glass-card {
+        background: rgba(7, 16, 35, 0.7);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.32);
+        backdrop-filter: blur(8px);
+        border-radius: 28px;
+    }
+
+    .brand-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(14, 116, 144, 0.28);
+        color: #67e8f9;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .form-control, .form-select {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        color: #fff;
+        border-radius: 14px;
+    }
+
+    .form-control::placeholder {
+        color: rgba(255,255,255,0.55);
+    }
+
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 0 0.2rem rgba(14, 165, 233, 0.28);
+        border-color: #22c55e;
+        background: rgba(255,255,255,0.12);
+        color: #fff;
+    }
+
+    .btn-primary-soft {
+        border-radius: 999px;
+        background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+        border: none;
+        color: #fff;
+        font-weight: 800;
+    }
+
+    .btn-outline-soft {
+        border-radius: 999px;
+        color: #e2e8f0;
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        background: rgba(255,255,255,0.04);
+        font-weight: 700;
+    }
+</style>
+
+<div class="auth-shell">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-6 col-md-8">
+                <div class="glass-card p-4 p-md-5">
+                    <div class="brand-badge mb-4">
+                        <i class="bi bi-person-add"></i>
+                        Khách hàng mới
+                    </div>
+
+                    <div class="mb-4">
+                        <h1 class="h2 fw-bold mb-2">Tạo tài khoản đặt bàn</h1>
+                        <p class="text-white-50 mb-0">Đăng ký nhanh để đặt bàn online, chọn dịch vụ và xem hóa đơn tạm tính.</p>
+                    </div>
+
+                    <form method="post" action="/KhachHang/Register">
+                        
+                        
+
+                        <div class="mb-3">
+                            <label class="form-label" for="HoTen">Họ tên</label>
+                            <input class="form-control" placeholder="Nguyễn Văn A" type="text" data-val="true" data-val-required="Vui l&#xF2;ng nh&#x1EAD;p h&#x1ECD; t&#xEA;n" id="HoTen" name="HoTen" value="" />
+                            <span class="text-danger small field-validation-valid" data-valmsg-for="HoTen" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="SoDienThoai">Số điện thoại</label>
+                            <input class="form-control" placeholder="0901234567" type="text" data-val="true" data-val-regex="S&#x1ED1; &#x111;i&#x1EC7;n tho&#x1EA1;i kh&#xF4;ng h&#x1EE3;p l&#x1EC7;" data-val-regex-pattern="^(0|\&#x2B;84)[0-9]{9,10}$" data-val-required="Vui l&#xF2;ng nh&#x1EAD;p s&#x1ED1; &#x111;i&#x1EC7;n tho&#x1EA1;i" id="SoDienThoai" name="SoDienThoai" value="" />
+                            <span class="text-danger small field-validation-valid" data-valmsg-for="SoDienThoai" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="Email">Email</label>
+                            <input class="form-control" placeholder="khach@demo.com" type="email" data-val="true" data-val-email="Email kh&#xF4;ng h&#x1EE3;p l&#x1EC7;" data-val-required="Vui l&#xF2;ng nh&#x1EAD;p email" id="Email" name="Email" value="" />
+                            <span class="text-danger small field-validation-valid" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="MatKhau">Mật khẩu</label>
+                            <input class="form-control" placeholder="Tối thiểu 6 ký tự" type="password" data-val="true" data-val-length="M&#x1EAD;t kh&#x1EA9;u ph&#x1EA3;i t&#x1EEB; 6 k&#xFD; t&#x1EF1; tr&#x1EDF; l&#xEA;n" data-val-length-max="255" data-val-length-min="6" data-val-required="Vui l&#xF2;ng nh&#x1EAD;p m&#x1EAD;t kh&#x1EA9;u" id="MatKhau" maxlength="255" name="MatKhau" />
+                            <span class="text-danger small field-validation-valid" data-valmsg-for="MatKhau" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label" for="XacNhanMatKhau">Xác nhận mật khẩu</label>
+                            <input class="form-control" placeholder="Nhập lại mật khẩu" type="password" data-val="true" data-val-equalto="M&#x1EAD;t kh&#x1EA9;u x&#xE1;c nh&#x1EAD;n kh&#xF4;ng kh&#x1EDB;p" data-val-equalto-other="*.MatKhau" data-val-required="Vui l&#xF2;ng x&#xE1;c nh&#x1EAD;n m&#x1EAD;t kh&#x1EA9;u" id="XacNhanMatKhau" name="XacNhanMatKhau" />
+                            <span class="text-danger small field-validation-valid" data-valmsg-for="XacNhanMatKhau" data-valmsg-replace="true"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary-soft py-2 fw-bold">
+                                <i class="bi bi-check-circle me-2"></i>Đăng ký tài khoản
+                            </button>
+                            <a class="btn btn-outline-soft py-2" href="/KhachHang/Login">Đã có tài khoản? Đăng nhập</a>
+                        </div>
+                    <input name="__RequestVerificationToken" type="hidden" value="CfDJ8BTuXLG2ZuVCty5feGzeWkx2mwchEVU1zSD-4iLFe4PfPWICeZsB7k8-znNjQubf6B8pykSmREdRe4U6_EwRVoc4kLnKuN4MsxtnWK0Zc6r2eZEtJ1Mzzz5l9DbYA3IBuUlot-QMUrp5Dp3NUfJcEJw" /></form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        </main>
+
+    </div>
+
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+    <script src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+
+
+</body>
+</html>

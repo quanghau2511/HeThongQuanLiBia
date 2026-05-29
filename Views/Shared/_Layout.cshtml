@@ -158,6 +158,18 @@
                                     </a>
                                 </li>
 
+                                <!-- QUẢN LÝ ĐẶT BÀN -->
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                           asp-controller="BookingManagement"
+                                           asp-action="Index">
+
+                                        <i class="fas fa-calendar-check me-1"></i>
+                                        ĐẶT BÀN
+
+                                    </a>
+                                </li>
+
                                 <!-- LỊCH SỬ HÓA ĐƠN -->
                                 <li class="nav-item">
                                     <a class="nav-link"
@@ -182,12 +194,26 @@
                                     </a>
                                 </li>
                             }
+                            else if (User.IsInRole("NhanVien") || User.IsInRole("Staff"))
+                            {
+                                <!-- QUẢN LÝ ĐẶT BÀN -->
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                           asp-controller="BookingManagement"
+                                           asp-action="Index">
+
+                                        <i class="fas fa-calendar-check me-1"></i>
+                                        ĐẶT BÀN
+
+                                    </a>
+                                </li>
+                            }
                         }
                         else
                         {
                             <li class="nav-item me-2">
-                                <a class="nav-link btn btn-primary text-white px-4" asp-controller="KhachHang" asp-action="Dashboard">
-                                    <i class="fas fa-calendar-check me-1"></i> Đặt bàn online
+                                <a class="nav-link btn btn-outline-primary px-4" asp-controller="KhachHang" asp-action="Dashboard">
+                                    <i class="fas fa-calendar-check me-1"></i> Trang khách
                                 </a>
                             </li>
 

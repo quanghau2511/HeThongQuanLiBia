@@ -1,156 +1,245 @@
-@model HeThongQuanLiBia.Models.DatBanBookingViewModel
+﻿@model HeThongQuanLiBia.Models.DatBanBookingViewModel
 @{
-    ViewData["Title"] = "Đặt bàn online";
+    ViewData["Title"] = "Trang khách";
     var khachHang = ViewBag.KhachHang as HeThongQuanLiBia.Models.KhachHang;
     var banList = ViewBag.BanList as IEnumerable<HeThongQuanLiBia.Models.Bans> ?? Enumerable.Empty<HeThongQuanLiBia.Models.Bans>();
     var dichVuList = ViewBag.DichVuList as IEnumerable<HeThongQuanLiBia.Models.DichVu> ?? Enumerable.Empty<HeThongQuanLiBia.Models.DichVu>();
     var lichSu = ViewBag.LichSuDatBan as IEnumerable<HeThongQuanLiBia.Models.DatBan> ?? Enumerable.Empty<HeThongQuanLiBia.Models.DatBan>();
+
+    var categoryOrder = new[] { "Cà phê", "Nước ngọt", "Nước uống", "Đồ ăn", "Dịch vụ" };
+}
+
+@functions {
+    public string GenerateImageFileName(string tenDichVu)
+    {
+        if (string.IsNullOrWhiteSpace(tenDichVu))
+        {
+            return "default";
+        }
+
+        string name = tenDichVu.ToLowerInvariant();
+        string[] search = { "áàảãạăắằẳẵặâấầẩẫậ", "éèẻẽẹêếềểễệ", "íìỉĩị", "óòỏõọôốồổỗộơớờởỡợ", "úùủũụưứừửự", "ýỳỷỹỵ", "đ" };
+        string[] replace = { "a", "e", "i", "o", "u", "y", "d" };
+
+        for (int i = 0; i < search.Length; i++)
+        {
+            foreach (char c in search[i])
+            {
+                name = name.Replace(c, replace[i][0]);
+            }
+        }
+
+        return name.Replace(" ", "_").Replace("/", "_").Replace("-", "_").Replace(".", "_");
+    }
+
+    public string GetCategory(string tenDichVu, int loaiDichVu)
+    {
+        var normalized = (tenDichVu ?? string.Empty).ToLowerInvariant();
+
+        if (normalized.Contains("cà phê") || normalized.Contains("ca phe") || normalized.Contains("cacao"))
+        {
+            return "Cà phê";
+        }
+
+        if (normalized.Contains("coca") || normalized.Contains("pepsi") || normalized.Contains("sting") || normalized.Contains("soda") || normalized.Contains("nước ngọt"))
+        {
+            return "Nước ngọt";
+        }
+
+        if (normalized.Contains("nước") || normalized.Contains("trà") || normalized.Contains("tea") || normalized.Contains("cam") || normalized.Contains("chanh") || normalized.Contains("sữa") || normalized.Contains("milk"))
+        {
+            return "Nước uống";
+        }
+
+        if (loaiDichVu == 3 || normalized.Contains("găng") || normalized.Contains("lơ") || normalized.Contains("khan") || normalized.Contains("thuốc") || normalized.Contains("bao") || normalized.Contains("túi"))
+        {
+            return "Dịch vụ";
+        }
+
+        if (normalized.Contains("com") || normalized.Contains("mi") || normalized.Contains("pho") || normalized.Contains("bun") || normalized.Contains("banh") || normalized.Contains("xoi") || normalized.Contains("gà") || normalized.Contains("sườn") || normalized.Contains("bo"))
+        {
+            return "Đồ ăn";
+        }
+
+        return loaiDichVu == 3 ? "Dịch vụ" : "Đồ ăn";
+    }
+
+    public string GetProductImageUrl(string tenDichVu)
+    {
+        string sanitized = GenerateImageFileName(tenDichVu);
+        string[] extensions = { ".jpg", ".jpeg", ".png", ".webp" };
+
+        foreach (var extension in extensions)
+        {
+            var filePath = System.IO.Path.Combine("wwwroot", "img", "products", sanitized + extension);
+            if (System.IO.File.Exists(filePath))
+            {
+                return $"/img/products/{sanitized}{extension}";
+            }
+        }
+
+        return "/img/products/tra_da.jpg";
+    }
 }
 
 <style>
+    :root {
+        --border-color: #dfe5ef;
+        --surface: #fff;
+        --surface-soft: #f8fafc;
+        --accent: #0f172a;
+        --accent-soft: #e6f0ff;
+        --text: #1e293b;
+        --muted: #64748b;
+    }
+
     body {
-        background:
-            radial-gradient(circle at top, rgba(14, 116, 144, 0.24), transparent 25%),
-            radial-gradient(circle at bottom, rgba(14, 165, 233, 0.16), transparent 30%),
-            linear-gradient(180deg, #020817 0%, #021126 28%, #f8fafc 28%, #f8fafc 100%);
+        background: #f3f5f9;
     }
 
-    .portal-hero {
-        border-radius: 30px;
-        border: 1px solid rgba(255,255,255,0.24);
-        background: linear-gradient(145deg, rgba(3,10,24,0.86), rgba(9,25,52,0.74));
-        box-shadow: 0 26px 60px rgba(7, 16, 35, 0.34);
-        color: #f8fafc;
-        backdrop-filter: blur(7px);
+    .page-shell {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
     }
 
-    .portal-card {
-        border-radius: 26px;
-        border: 1px solid rgba(148, 163, 184, 0.16);
-        background: rgba(255,255,255,0.78);
-        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
-        backdrop-filter: blur(6px);
+    .section-card {
+        background: var(--surface);
+        border: 1px solid var(--border-color);
+        border-radius: 22px;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
     }
 
-    .glass-chip {
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: .25rem .6rem;
         border-radius: 999px;
-        padding: 0.35rem 0.75rem;
-        font-size: 0.7rem;
+        font-size: .68rem;
         font-weight: 800;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        background: rgba(14, 116, 144, 0.16);
-        color: #0f766e;
+        letter-spacing: .08em;
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .stat-box {
+        min-width: 116px;
+        border-radius: 18px;
+        border: 1px solid #e2e8f0;
+        background: var(--surface-soft);
     }
 
     .menu-card {
-        border-radius: 20px;
-        border: 1px solid rgba(148, 163, 184, 0.25);
         background: #fff;
-        transition: all 0.22s ease;
+        border-radius: 18px;
+        border: 1px solid #e2e8f0;
         overflow: hidden;
+        transition: transform .2s ease, box-shadow .2s ease;
+        height: 100%;
     }
 
     .menu-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 18px 32px rgba(14, 116, 144, 0.16);
-        border-color: #0ea5e9;
+        transform: translateY(-3px);
+        box-shadow: 0 14px 26px rgba(15, 23, 42, 0.12);
     }
 
     .menu-thumb {
         width: 100%;
-        height: 120px;
+        aspect-ratio: 4 / 3;
         object-fit: cover;
-        background: linear-gradient(140deg,#e2e8f0,#f8fafc);
-    }
-
-    .btn-modern {
-        border-radius: 999px;
-        font-weight: 800;
-        transition: all 0.2s ease;
-    }
-
-    .table-card {
-        border-radius: 20px;
-        background: linear-gradient(180deg, #fff, #f8fafc);
-        border: 1px solid rgba(148, 163, 184, 0.24);
-        padding: 1rem;
-        transition: all 0.2s ease;
-    }
-
-    .table-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 16px 30px rgba(14, 116, 144, 0.16);
-    }
-
-    .cart-item {
-        border-radius: 16px;
-        border: 1px solid rgba(148, 163, 184, 0.24);
-        background: #fff;
-        padding: 0.9rem 1rem;
-        margin-bottom: 0.75rem;
-    }
-
-    .invoice-box {
-        border-radius: 22px;
-        background: linear-gradient(180deg, rgba(14, 116, 144, 0.12), rgba(14, 116, 144, 0.04));
-        border: 1px solid rgba(14, 116, 144, 0.18);
-        padding: 1rem 1.1rem;
+        background: linear-gradient(180deg, #f8fafc, #e2e8f0);
     }
 
     .filter-chip {
         border-radius: 999px;
         border: 1px solid #cbd5e1;
-        color: #1e293b;
-        background: #fff;
+        color: #334155;
         font-weight: 700;
-        margin-right: 0.5rem;
+        background: #fff;
     }
 
     .filter-chip.active {
-        background: linear-gradient(135deg, #0284c7, #06b6d4);
-        border-color: transparent;
+        background: #0f172a;
         color: #fff;
+        border-color: #0f172a;
     }
 
-    @@media (max-width: 991.98px) {
-        body { background: linear-gradient(180deg, #020817 0%, #021126 26%, #f8fafc 26%, #f8fafc 100%); }
+    .summary-card {
+        border-radius: 18px;
+        background: linear-gradient(180deg, #f8fafc, #fff);
+        border: 1px solid #cae1ff;
+    }
+
+    .cart-item {
+        display: grid;
+        grid-template-columns: 1.2fr auto auto;
+        align-items: center;
+        gap: .85rem;
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        padding: .85rem 1rem;
+        margin-bottom: .6rem;
+    }
+
+    .history-item {
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+    }
+
+    .qty-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #dbe2eb;
+        padding: .1rem;
+    }
+
+    .qty-step {
+        width: 26px;
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        border: 0;
+        background: #fff;
+        color: #0f172a;
+        font-weight: 800;
+    }
+
+    .empty-cart {
+        border-radius: 14px;
+        border: 1px dashed #cbd5e1;
+        padding: 1rem;
+        text-align: center;
+        color: #64748b;
+        background: #fff;
     }
 </style>
 
-<div class="container-fluid px-3 px-lg-4 py-3">
-    <div class="portal-hero p-4 p-lg-5 mb-4">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-7">
-                <div class="glass-chip mb-3">KHÁCH HÀNG</div>
-                <h1 class="display-5 fw-bold mb-3">Đặt bàn & chọn dịch vụ online</h1>
-                <p class="text-white-50 mb-0" style="max-width: 760px;">
-                    Đăng nhập tài khoản, chọn bàn bida, thời gian chơi, thêm đồ uống món ăn phụ kiện, và xem hóa đơn tạm tính ngay trên nền tảng hiện đại.
+<div class="container-fluid px-3 px-lg-4 py-3 page-shell">
+    <div class="section-card p-4">
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-start">
+            <div>
+                <span class="hero-badge">TRANG KHÁCH</span>
+                <h1 class="h2 fw-bold text-dark mt-3 mb-2">Đặt bàn & gọi món</h1>
+                <p class="text-muted mb-0" style="max-width: 720px;">
+                    Chọn bàn, kiểm tra thời gian chơi, thêm món nhanh và theo dõi tổng tiền tạm tính theo thời gian thực.
                 </p>
             </div>
-            <div class="col-lg-5">
-                <div class="portal-card p-4">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div>
-                            <div class="fw-bold text-dark mb-1">@khachHang?.HoTen</div>
-                            <div class="text-muted small">@khachHang?.Email</div>
-                        </div>
-                        <span class="badge bg-primary-subtle text-primary fw-bold">ONLINE</span>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <div class="p-3 rounded-3 bg-light">
-                                <div class="text-muted small">Tổng lượt đặt</div>
-                                <div class="fs-3 fw-bold text-dark">@lichSu.Count()</div>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="p-3 rounded-3 bg-light">
-                                <div class="text-muted small">Trạng thái tài khoản</div>
-                                <div class="fs-6 fw-bold text-success">Hoạt động</div>
-                            </div>
-                        </div>
-                    </div>
+
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                <div class="stat-box p-3 text-center">
+                    <div class="small text-muted">Lượt đặt</div>
+                    <div class="fs-4 fw-bold text-dark">@lichSu.Count()</div>
+                </div>
+                <div class="stat-box p-3 text-center">
+                    <div class="small text-muted">Trạng thái</div>
+                    <div class="fs-6 fw-bold text-primary">Hoạt động</div>
                 </div>
             </div>
         </div>
@@ -158,7 +247,7 @@
 
     @if (ViewBag.SuccessMessage != null)
     {
-        <div class="alert alert-success rounded-4 border-0 shadow-sm mb-4">
+        <div class="alert alert-success rounded-4 border-0 shadow-sm mb-0">
             <i class="bi bi-check-circle-fill me-2"></i>
             @ViewBag.SuccessMessage
         </div>
@@ -166,21 +255,21 @@
 
     @if (ViewBag.InvoiceSummary != null)
     {
-        <div class="alert alert-primary rounded-4 border-0 shadow-sm mb-4">
+        <div class="alert alert-primary rounded-4 border-0 shadow-sm mb-0">
             <div class="fw-bold mb-2"><i class="bi bi-receipt me-2"></i>Hóa đơn tạm tính</div>
             <pre class="mb-0 text-dark" style="white-space: pre-wrap; font-family: inherit;">@ViewBag.InvoiceSummary</pre>
         </div>
     }
 
-    <div class="row g-4">
+    <div class="row g-4 align-items-start">
         <div class="col-xl-7">
-            <div class="portal-card p-4 mb-4">
-                <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="section-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h2 class="h4 fw-bold text-dark mb-1">Thông tin đặt bàn</h2>
-                        <p class="text-muted mb-0">Chọn bàn, ngày giờ chơi, và thêm dịch vụ kèm theo.</p>
+                        <h2 class="h5 fw-bold text-dark mb-1">Thông tin đặt bàn</h2>
+                        <p class="text-muted small mb-0">Nhập thông tin bàn, chọn khung giờ và gọi thêm món.</p>
                     </div>
-                    <span class="glass-chip">Booking</span>
+                    <span class="badge bg-light text-dark fw-semibold">BOOKING</span>
                 </div>
 
                 <form asp-action="DatBan" method="post" id="bookingForm">
@@ -189,38 +278,38 @@
 
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label asp-for="BanId" class="form-label text-dark fw-semibold">Bàn bida</label>
-                            <select asp-for="BanId" class="form-select">
+                            <label asp-for="BanId" class="form-label fw-semibold text-dark">Bàn bida</label>
+                            <select asp-for="BanId" class="form-select rounded-3">
                                 <option value="">-- Chọn bàn --</option>
-                                @foreach (var ban in banList)
+                                @foreach (var ban in banList.OrderBy(b => b.TenBan))
                                 {
-                                    <option value="@ban.BanId" data-gia="@ban.GiaTheoGio">@ban.TenBan - @ban.GiaTheoGio.ToString("N0") đ/giờ</option>
+                                    <option value="@ban.BanId" data-gia="@(ban.GiaTheoGio.ToString(System.Globalization.CultureInfo.InvariantCulture))">@ban.TenBan - @ban.GiaTheoGio.ToString("N0") đ/giờ</option>
                                 }
                             </select>
                             <span asp-validation-for="BanId" class="text-danger small"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="NgayDat" class="form-label text-dark fw-semibold">Ngày chơi</label>
-                            <input asp-for="NgayDat" class="form-control" />
+                            <label asp-for="NgayDat" class="form-label fw-semibold text-dark">Ngày chơi</label>
+                            <input asp-for="NgayDat" class="form-control rounded-3" />
                             <span asp-validation-for="NgayDat" class="text-danger small"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="GioBatDau" class="form-label text-dark fw-semibold">Giờ bắt đầu</label>
-                            <input asp-for="GioBatDau" type="time" class="form-control" />
+                            <label asp-for="GioBatDau" class="form-label fw-semibold text-dark">Giờ bắt đầu</label>
+                            <input asp-for="GioBatDau" type="time" class="form-control rounded-3" />
                             <span asp-validation-for="GioBatDau" class="text-danger small"></span>
                         </div>
 
                         <div class="col-md-6">
-                            <label asp-for="GioKetThuc" class="form-label text-dark fw-semibold">Giờ kết thúc</label>
-                            <input asp-for="GioKetThuc" type="time" class="form-control" />
+                            <label asp-for="GioKetThuc" class="form-label fw-semibold text-dark">Giờ kết thúc</label>
+                            <input asp-for="GioKetThuc" type="time" class="form-control rounded-3" />
                             <span asp-validation-for="GioKetThuc" class="text-danger small"></span>
                         </div>
 
                         <div class="col-12">
-                            <label asp-for="GhiChu" class="form-label text-dark fw-semibold">Ghi chú</label>
-                            <textarea asp-for="GhiChu" class="form-control" rows="3" placeholder="Yêu cầu đặc biệt, thời gian ưu tiên, ..."></textarea>
+                            <label asp-for="GhiChu" class="form-label fw-semibold text-dark">Ghi chú</label>
+                            <textarea asp-for="GhiChu" class="form-control rounded-3" rows="3" placeholder="Yêu cầu đặc biệt, thời gian ưu tiên, ..."></textarea>
                             <span asp-validation-for="GhiChu" class="text-danger small"></span>
                         </div>
                     </div>
@@ -228,48 +317,58 @@
                     <input type="hidden" asp-for="SelectedServicesJson" id="SelectedServicesJson" />
 
                     <div class="mt-4 border-top pt-4">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex flex-column flex-lg-row justify-content-between gap-2 align-items-lg-center mb-3">
                             <div>
-                                <h3 class="h5 fw-bold text-dark mb-0">Dịch vụ kèm theo</h3>
-                                <p class="text-muted small mb-0">Thêm đồ uống, món ăn và phụ kiện.</p>
+                                <h3 class="h5 fw-bold text-dark mb-1">Menu theo danh mục</h3>
+                                <p class="text-muted small mb-0">Lọc nhanh và chọn món theo loại.</p>
                             </div>
-                            <div class="d-flex flex-wrap">
+
+                            <div class="d-flex flex-wrap gap-2">
                                 <button type="button" class="btn btn-sm filter-chip active" data-filter="all">Tất cả</button>
-                                <button type="button" class="btn btn-sm filter-chip" data-filter="1">Đồ uống</button>
-                                <button type="button" class="btn btn-sm filter-chip" data-filter="2">Món ăn</button>
-                                <button type="button" class="btn btn-sm filter-chip" data-filter="3">Phụ kiện</button>
+                                @foreach (var category in categoryOrder)
+                                {
+                                    <button type="button" class="btn btn-sm filter-chip" data-filter="@category">@category</button>
+                                }
                             </div>
                         </div>
 
                         <div class="row g-3" id="menuGrid">
                             @foreach (var dichVu in dichVuList)
                             {
-                                <div class="col-md-6 col-lg-4 menu-item" data-loai="@dichVu.LoaiDichVu">
-                                    <div class="menu-card h-100">
-                                        <img src="/img/products/@(dichVu.TenDichVu.ToLower().Replace(" ", "_").Replace("á","a").Replace("à","a").Replace("ả","a").Replace("ã","a").Replace("ạ","a")) .png" onerror="this.onerror=null;this.src='/img/products/tra_da.jpg';" class="menu-thumb" alt="@dichVu.TenDichVu" />
-                                        <div class="p-3">
-                                            <div class="d-flex justify-content-between align-items-start">
+                                var category = GetCategory(dichVu.TenDichVu, dichVu.LoaiDichVu);
+                                <div class="col-sm-6 col-xl-4 menu-item" data-category="@category">
+                                    <article class="menu-card">
+                                        <img src="@GetProductImageUrl(dichVu.TenDichVu)"
+                                             loading="lazy"
+                                             onerror="this.onerror=null; this.src='/img/products/tra_da.jpg';"
+                                             class="menu-thumb"
+                                             alt="@dichVu.TenDichVu" />
+                                        <div class="p-3 d-flex flex-column flex-grow-1">
+                                            <div class="d-flex justify-content-between gap-2 align-items-start">
                                                 <div>
-                                                    <div class="fw-bold text-dark">@dichVu.TenDichVu</div>
-                                                    <div class="text-muted small">@dichVu.DonViTinh</div>
+                                                    <div class="small fw-bold text-primary mb-1">@category</div>
+                                                    <h4 class="h6 fw-bold text-dark mb-1">@dichVu.TenDichVu</h4>
+                                                    <p class="text-muted small mb-0">@dichVu.DonViTinh</p>
                                                 </div>
-                                                <span class="badge bg-light text-dark fw-bold">@dichVu.Gia.ToString("N0") đ</span>
+                                                <span class="badge bg-light text-dark fw-semibold">@dichVu.Gia.ToString("N0") đ</span>
                                             </div>
-                                            <button type="button" class="btn btn-primary btn-modern w-100 mt-3 add-service"
+
+                                            <button type="button"
+                                                    class="btn btn-dark w-100 mt-3 add-service"
                                                     data-id="@dichVu.DichVuId"
                                                     data-name="@dichVu.TenDichVu"
-                                                    data-price="@dichVu.Gia">
+                                                    data-price="@dichVu.Gia.ToString(System.Globalization.CultureInfo.InvariantCulture)">
                                                 <i class="bi bi-plus-circle me-1"></i>Thêm món
                                             </button>
                                         </div>
-                                    </div>
+                                    </article>
                                 </div>
                             }
                         </div>
                     </div>
 
                     <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-primary btn-modern py-2 fs-5">
+                        <button type="submit" class="btn btn-primary btn-lg fw-bold rounded-3">
                             <i class="bi bi-calendar-check me-2"></i>Xác nhận đặt bàn
                         </button>
                     </div>
@@ -278,27 +377,27 @@
         </div>
 
         <div class="col-xl-5">
-            <div class="portal-card p-4 mb-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="section-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
-                        <h2 class="h5 fw-bold text-dark mb-1">Giỏ dịch vụ & tạm tính</h2>
-                        <p class="text-muted small mb-0">Các món bạn thêm sẽ hiển thị tại đây.</p>
+                        <h2 class="h5 fw-bold text-dark mb-1">Giỏ dịch vụ</h2>
+                        <p class="text-muted small mb-0">Tổng tiền cập nhật realtime.</p>
                     </div>
-                    <span class="glass-chip">Preview</span>
+                    <span class="badge bg-secondary-subtle text-dark">LIVE</span>
                 </div>
 
                 <div id="cartList" class="mb-3">
-                    <div class="text-center text-muted py-4 border rounded-4">Chưa có dịch vụ nào được chọn.</div>
+                    <div class="empty-cart">Chưa có món nào được chọn.</div>
                 </div>
 
-                <div class="invoice-box">
+                <div class="summary-card p-3">
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Phí bàn/giờ</span>
-                        <span class="fw-bold text-dark" id="tablePriceDisplay">0 đ</span>
+                        <span class="text-muted">Phí bàn / giờ</span>
+                        <strong id="tablePriceDisplay" class="text-dark">0 đ</strong>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Dịch vụ</span>
-                        <span class="fw-bold text-dark" id="serviceTotalDisplay">0 đ</span>
+                        <strong id="serviceTotalDisplay" class="text-dark">0 đ</strong>
                     </div>
                     <div class="d-flex justify-content-between border-top pt-2 mt-2">
                         <span class="fw-bold text-dark">Tổng tạm tính</span>
@@ -307,31 +406,43 @@
                 </div>
             </div>
 
-            <div class="portal-card p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="section-card p-4 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h2 class="h5 fw-bold text-dark mb-1">Lịch sử đặt bàn</h2>
                         <p class="text-muted small mb-0">Theo dõi các lần đặt gần đây.</p>
                     </div>
-                    <span class="glass-chip">History</span>
+                    <span class="badge bg-light text-dark">RECENT</span>
                 </div>
 
                 @if (!lichSu.Any())
                 {
-                    <div class="text-center text-muted py-4">Chưa có lịch sử đặt bàn.</div>
+                    <div class="empty-cart mb-0">Chưa có lịch sử đặt bàn.</div>
                 }
                 else
                 {
                     <div class="d-flex flex-column gap-2">
                         @foreach (var item in lichSu.Take(6))
                         {
-                            <div class="border rounded-4 p-3 bg-white">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <div class="fw-bold text-dark">@item.Ban?.TenBan</div>
-                                    <span class="badge bg-info-subtle text-info">@((item.TrangThai == 0 ? "Chờ xác nhận" : item.TrangThai == 1 ? "Đã xác nhận" : "Đã hủy"))</span>
+                            var itemTotal = item.DatBanDichVus?.Sum(service => service.SoLuong * service.DonGiaTaiThoiDiemBan) ?? 0m;
+                            var durationHours = (item.GioKetThuc.ToTimeSpan() - item.GioBatDau.ToTimeSpan()).TotalHours;
+                            var tableFee = (decimal)durationHours * (item.Ban?.GiaTheoGio ?? 0m);
+                            var finalTotal = itemTotal + tableFee;
+
+                            <div class="history-item p-3">
+                                <div class="d-flex justify-content-between align-items-start gap-3">
+                                    <div>
+                                        <div class="fw-bold text-dark">@item.Ban?.TenBan</div>
+                                        <div class="small text-muted">@item.NgayDat.ToString("dd/MM/yyyy") • @item.GioBatDau.ToString("hh\\:mm") - @item.GioKetThuc.ToString("hh\\:mm")</div>
+                                    </div>
+                                    <span class="badge rounded-pill bg-primary-subtle text-primary fw-semibold">@((item.TrangThai == 0 ? "Chờ xác nhận" : item.TrangThai == 1 ? "Đã xác nhận" : "Đã hủy"))</span>
                                 </div>
-                                <div class="small text-muted">@item.NgayDat.ToString("dd/MM/yyyy") • @item.GioBatDau.ToString(@"hh\:mm") - @item.GioKetThuc.ToString(@"hh\:mm")</div>
-                                <div class="small text-muted">@item.GhiChu</div>
+
+                                <div class="small text-muted mt-2">@(string.IsNullOrWhiteSpace(item.GhiChu) ? "Không ghi chú" : item.GhiChu)</div>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <span class="small text-muted">Tạm tính</span>
+                                    <span class="fw-bold text-primary">@finalTotal.ToString("N0") đ</span>
+                                </div>
                             </div>
                         }
                     </div>
@@ -344,47 +455,97 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        const menuItems = document.querySelectorAll('.menu-item');
-        const filterButtons = document.querySelectorAll('[data-filter]');
-        const serviceButtons = document.querySelectorAll('.add-service');
+        const cart = new Map();
         const cartList = document.getElementById('cartList');
         const selectedServicesJson = document.getElementById('SelectedServicesJson');
+        const filterButtons = document.querySelectorAll('[data-filter]');
+        const menuItems = document.querySelectorAll('.menu-item');
 
-        let cart = new Map();
+        const safeNumber = (value) => {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : 0;
+        };
+
+        const formatCurrency = (value) => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 }).format(Math.max(0, safeNumber(value))) + ' đ';
+
+        function parseTimeToMinutes(value) {
+            if (!value) {
+                return null;
+            }
+
+            const [hours, minutes] = value.split(':').map(Number);
+            if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+                return null;
+            }
+
+            return hours * 60 + minutes;
+        }
+
+        function getDurationHours() {
+            const startMinutes = parseTimeToMinutes(document.getElementById('GioBatDau').value);
+            const endMinutes = parseTimeToMinutes(document.getElementById('GioKetThuc').value);
+
+            if (startMinutes === null || endMinutes === null) {
+                return 0;
+            }
+
+            const duration = (endMinutes - startMinutes) / 60;
+            if (!Number.isFinite(duration) || duration < 0) {
+                return 0;
+            }
+
+            return duration;
+        }
 
         function syncCart() {
-            const items = Array.from(cart.values());
-            selectedServicesJson.value = JSON.stringify(items);
+            const items = Array.from(cart.values())
+                .map((item) => ({
+                    ...item,
+                    quantity: Math.max(1, safeNumber(item.quantity)),
+                    price: safeNumber(item.price)
+                }))
+                .filter((item) => item.quantity > 0);
+
+            cart.clear();
+            items.forEach((item) => cart.set(item.id, item));
+
+            selectedServicesJson.value = JSON.stringify(items.map((item) => ({
+                dichVuId: item.id,
+                soLuong: item.quantity
+            })));
 
             if (items.length === 0) {
-                cartList.innerHTML = '<div class="text-center text-muted py-4 border rounded-4">Chưa có dịch vụ nào được chọn.</div>';
+                cartList.innerHTML = '<div class="empty-cart">Chưa có món nào được chọn.</div>';
                 document.getElementById('serviceTotalDisplay').textContent = '0 đ';
             } else {
                 cartList.innerHTML = '';
                 let serviceTotal = 0;
-                items.forEach(item => {
-                    const total = item.price * item.quantity;
-                    serviceTotal += total;
+
+                items.forEach((item) => {
+                    const lineTotal = item.price * item.quantity;
+                    serviceTotal += lineTotal;
 
                     const node = document.createElement('div');
                     node.className = 'cart-item';
                     node.innerHTML = `
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="fw-bold text-dark">${item.name}</div>
-                                <div class="small text-muted">${item.price.toLocaleString('vi-VN')} đ / món</div>
-                            </div>
-                            <div class="d-flex align-items-center gap-2">
-                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle decrease-item" data-id="${item.id}">-</button>
-                                <span class="fw-bold text-dark">${item.quantity}</span>
-                                <button type="button" class="btn btn-sm btn-outline-primary rounded-circle increase-item" data-id="${item.id}">+</button>
-                            </div>
+                        <div>
+                            <div class="fw-bold text-dark">${item.name}</div>
+                            <div class="small text-muted">${formatCurrency(item.price)} / món</div>
+                        </div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-step decrease-item" data-id="${item.id}">−</button>
+                            <span class="fw-bold px-2">${item.quantity}</span>
+                            <button type="button" class="qty-step increase-item" data-id="${item.id}">+</button>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold text-primary">${formatCurrency(lineTotal)}</div>
                         </div>
                     `;
+
                     cartList.appendChild(node);
                 });
 
-                document.getElementById('serviceTotalDisplay').textContent = serviceTotal.toLocaleString('vi-VN') + ' đ';
+                document.getElementById('serviceTotalDisplay').textContent = formatCurrency(serviceTotal);
             }
 
             updateSummary();
@@ -392,32 +553,26 @@
 
         function updateSummary() {
             const selectedBan = document.querySelector('#BanId option:checked');
-            const tablePrice = Number(selectedBan?.dataset.gia || 0);
-            const serviceTotal = Array.from(cart.values()).reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const duration = (() => {
-                const start = document.querySelector('#GioBatDau').value;
-                const end = document.querySelector('#GioKetThuc').value;
-                if (!start || !end) return 0;
-                const [sh, sm] = start.split(':').map(Number);
-                const [eh, em] = end.split(':').map(Number);
-                const startMinutes = sh * 60 + sm;
-                const endMinutes = eh * 60 + em;
-                return Math.max((endMinutes - startMinutes) / 60, 0);
-            })();
+            const tablePrice = safeNumber(selectedBan?.dataset.gia);
+            const duration = getDurationHours();
+            const tableTotal = tablePrice * duration;
+            const serviceTotal = Array.from(cart.values()).reduce((sum, item) => sum + safeNumber(item.price) * safeNumber(item.quantity), 0);
+            const grandTotal = tableTotal + serviceTotal;
 
-            document.getElementById('tablePriceDisplay').textContent = (tablePrice * duration).toLocaleString('vi-VN') + ' đ';
-            document.getElementById('grandTotalDisplay').textContent = ((tablePrice * duration) + serviceTotal).toLocaleString('vi-VN') + ' đ';
+            document.getElementById('tablePriceDisplay').textContent = formatCurrency(tableTotal);
+            document.getElementById('serviceTotalDisplay').textContent = formatCurrency(serviceTotal);
+            document.getElementById('grandTotalDisplay').textContent = formatCurrency(grandTotal);
         }
 
-        serviceButtons.forEach(button => {
+        document.querySelectorAll('.add-service').forEach((button) => {
             button.addEventListener('click', () => {
                 const id = Number(button.dataset.id);
-                const name = button.dataset.name;
-                const price = Number(button.dataset.price);
+                const name = button.dataset.name || 'Món';
+                const price = safeNumber(button.dataset.price);
 
                 if (cart.has(id)) {
                     const item = cart.get(id);
-                    item.quantity += 1;
+                    item.quantity = safeNumber(item.quantity) + 1;
                 } else {
                     cart.set(id, { id, name, price, quantity: 1 });
                 }
@@ -427,36 +582,36 @@
         });
 
         document.addEventListener('click', (event) => {
-            if (event.target.classList.contains('increase-item')) {
-                const id = Number(event.target.dataset.id);
-                const item = cart.get(id);
-                if (item) item.quantity += 1;
-                syncCart();
-            }
-
-            if (event.target.classList.contains('decrease-item')) {
+            if (event.target.matches('.increase-item')) {
                 const id = Number(event.target.dataset.id);
                 const item = cart.get(id);
                 if (item) {
-                    item.quantity -= 1;
-                    if (item.quantity <= 0) cart.delete(id);
+                    item.quantity = safeNumber(item.quantity) + 1;
+                }
+                syncCart();
+            }
+
+            if (event.target.matches('.decrease-item')) {
+                const id = Number(event.target.dataset.id);
+                const item = cart.get(id);
+                if (item) {
+                    item.quantity = safeNumber(item.quantity) - 1;
+                    if (item.quantity <= 0) {
+                        cart.delete(id);
+                    }
                 }
                 syncCart();
             }
         });
 
-        filterButtons.forEach(button => {
+        filterButtons.forEach((button) => {
             button.addEventListener('click', () => {
-                const type = button.dataset.filter;
-                menuItems.forEach(item => {
-                    if (type === 'all' || item.dataset.loai === type) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
+                const category = button.dataset.filter;
+                menuItems.forEach((item) => {
+                    item.style.display = category === 'all' || item.dataset.category === category ? 'block' : 'none';
                 });
 
-                filterButtons.forEach(btn => btn.classList.remove('active'));
+                filterButtons.forEach((btn) => btn.classList.remove('active'));
                 button.classList.add('active');
             });
         });
